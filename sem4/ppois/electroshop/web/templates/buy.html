@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center">Покупка товара</h1>
+    <a href="{{ url_for('index') }}" class="btn btn-secondary mb-3">На главную</a>
+    <form method="POST" action="{{ url_for('buy_product') }}">
+        <div class="mb-3">
+            <label for="customer" class="form-label">Покупатель</label>
+            <select class="form-select" id="customer" name="customer" required>
+                {% for customer in customers %}
+                <option value="{{ customer.get_name() }}">{{ customer.get_name() }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="product" class="form-label">Товар</label>
+            <select class="form-select" id="product" name="product" required>
+                {% for product in products %}
+                <option value="{{ product.get_name() }}">{{ product.get_name() }} ({{ product.get_price() }} BYN)</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Купить</button>
+    </form>
+</div>
+{% endblock %}

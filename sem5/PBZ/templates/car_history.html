@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>История осмотров автомобиля</h1>
+
+<div class="form-section">
+    <h2>Поиск по номеру двигателя</h2>
+    <form method="GET" action="{{ url_for('car_history') }}">
+        <div class="form-group">
+            <label>Номер двигателя:</label>
+            <input type="text" name="engine_number" value="{{ engine_number or '' }}" 
+                   pattern="[A-Za-z0-9]{1,50}" required>
+        </div>
+        <button type="submit">Найти историю</button>
+    </form>
+</div>
+
+{% if engine_number %}
+<div class="form-section">
+    <h2>История осмотров для двигателя: {{ engine_number }}</h2>
+    
+    {% if history %}
+    <table>
+        <thead>
+            <tr>
+                <th>Госномер</th>
+                <th>Дата осмотра</th>
+                <th>Результат</th>
+                <th>Заключение</th>
+                <th>Инспектор</th>
+                <th>Звание инспектора</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in history %}
+            <tr>
+                <td>{{ record[0] }}</td>
+                <td>{{ record[1] }}</td>
+                <td>
+                    {% if record[2] %}
+                    <span style="color: green;">Пройден</span>
+                    {% else %}
+                    <span style="color: red;">Не пройден</span>
+                    {% endif %}
+                </td>
+                <td>{{ record[3] or '-' }}</td>
+                <td>{{ record[4] }}</td>
+                <td>{{ record[5] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>История осмотров для данного двигателя не найдена.</p>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Ресторанная игра</title>
+    <link rel="stylesheet" href="../static/style.css">
+</head>
+<body>
+    <!-- Панель приветствия -->
+    <div id="startPanel" class="hidden">
+        <div class="panel-content">
+            <h2>Добро пожаловать!</h2>
+            <p>Вы готовы управлять своей столовой?</p>
+            <button id="closeStartPanel">Закрыть</button>
+            <button id="start">Начать игру</button>
+        </div>
+    </div>
+    <!-- Меню -->
+    <div id="menuPanel" class="hidden">
+        <div class="panel-content">
+            <h2>Меню</h2>
+            <div id="dishList"></div>
+            <button id="addDish">Добавить блюдо</button>
+            <button id="closeMenuPanel">Закрыть</button>
+        </div>
+    </div>
+    <!-- Панель добавления блюда -->
+    <div id="addDishPanel" class="hidden">
+        <div class="panel-content">
+            <h2>Добавить блюдо</h2>
+            <input type="text" id="dishInput" placeholder="Название блюда">
+            <button id="submitDish">Добавить</button>
+            <button id="closeAddDishPanel">Закрыть</button>
+        </div>
+    </div>
+    <!-- Зал -->
+    <div id="hallPanel" class="hidden">
+        <div class="panel-content">
+            <h2>Зал</h2>
+            <div id="tableList"></div>
+            <button id="closeHallPanel">Закрыть</button>
+        </div>
+    </div>
+    <!-- Заказы -->
+    <div id="orderPanel" class="hidden">
+        <div class="panel-content">
+            <h2>Заказы</h2>
+            <div id="orderList"></div>
+            <button id="closeOrderPanel">Закрыть</button>
+        </div>
+    </div>
+    <!-- Сотрудники -->
+    <div id="employeePanel" class="hidden">
+        <div class="panel-content">
+            <h2>Сотрудники</h2>
+            <div id="employeeList"></div>
+            <button id="closeEmployeePanel">Закрыть</button>
+        </div>
+    </div>
+    <!-- Основная игра -->
+    <div id="game">
+        <h1>Столовая</h1>
+        <div id="money">Деньги: <span id="cash">0</span></div>
+        <div id="timer">Время: <span id="time">60</span></div>
+        <div id="customers">Клиентов нет</div>
+        <button id="startGame" {% if game_active %}disabled{% endif %}>Начать игру</button>
+        <button id="hall" {% if not game_active %}disabled{% endif %}>Зал</button>
+        <button id="orders"{% if not game_active %}disabled{% endif %}>Заказы</button>
+        <button id="employee" {% if game_active %}disabled{% endif %}>Сотрудники</button>
+        <button id="menu" {% if game_active %}disabled{% endif %}>Меню</button>
+    </div>
+    <script src="../static/variables.js"></script>
+    <script src="../static/ui.js"></script>
+    <script src="../static/order.js"></script>
+    <script src="../static/dishes.js"></script>
+    <script src="../static/employees.js"></script>
+    <script src="../static/game.js"></script>
+    <script src="../static/hall.js"></script>
+    <script src="../static/eventHandlers.js"></script>
+</body>
+</html>

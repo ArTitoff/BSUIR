@@ -1,0 +1,6 @@
+@startuml
+class Share {
+    lottery()
+        __init__()
+}
+@enduml

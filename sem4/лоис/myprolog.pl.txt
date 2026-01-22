@@ -1,0 +1,175 @@
+:- use_module(library(clpfd)).
+
+% Основные параметры задачи
+% v - скорость на велосипеде (км/ч)
+% y - скорость транспортировки сломанного велосипеда (км/ч)
+% w - скорость пешехода (км/ч)
+% u - скорость пешехода, ведущего велосипед (км/ч)
+% distance - расстояние между пунктами А и Б (км)
+
+% Правило для запуска решения
+solve :-
+    % Ввод параметров задачи
+    write('Введите скорость на велосипеде (v, км/ч): '), read(v), nl,
+    write('Введите скорость транспортировки сломанного велосипеда (y, км/ч): '), read(y), nl,
+    write('Введите скорость пешехода (w, км/ч): '), read(w), nl,
+    write('Введите скорость пешехода, ведущего велосипед (u, км/ч): '), read(u), nl,
+    write('Введите расстояние между пунктами А и Б (км): '), read(Distance), nl,
+    
+    % Проверка корректности введенных данных
+    (v >= y, y >= w, w >= u ->
+        % Поиск оптимального решения
+        find_best_solution(v, y, w, u, Distance, BestTime, BestPlan),
+        
+        % Вывод результатов
+        format('Минимальное время перемещения: ~2f часов~n', [BestTime]),
+        write('Оптимальный план перемещения:'), nl,
+        print_plan(BestPlan)
+    ;
+        write('Ошибка: Не соблюдены условия v >= y >= w >= u'), nl
+    ).
+
+% Поиск лучшего решения среди всех возможных вариантов
+find_best_solution(V, Y, W, U, Distance, BestTime, BestPlan) :-
+    findall(Time-Plan, generate_solution(V, Y, W, U, Distance, Time, Plan), Solutions),
+    sort(Solutions, [BestTime-BestPlan|_]).
+
+% Генерация всех возможных решений
+generate_solution(V, Y, W, U, Distance, TotalTime, Plan) :-
+    % Исходное состояние: все в пункте А с велосипедами
+    initial_state(InitialState),
+    
+    % Целевое состояние: все в пункте Б
+    final_state(FinalState),
+    
+    % Поиск пути между состояниями
+    travel(InitialState, FinalState, V, Y, W, U, Distance, Plan, [], 0, TotalTime).
+
+% Исходное состояние: все три путешественника в пункте А с велосипедами
+initial_state([traveler(1, a, bike), traveler(2, a, bike), traveler(3, a, bike)]).
+
+% Целевое состояние: все три путешественника в пункте Б
+final_state([traveler(1, b, _), traveler(2, b, _), traveler(3, b, _)]).
+
+% Правило перемещения между состояниями
+travel(State, State, _, _, _, _, _, [], _, 0) :- !.
+
+travel(CurrentState, FinalState, V, Y, W, U, Distance, [Action|Actions], Visited, TimeAcc, TotalTime) :-
+    % Генерация возможного действия
+    possible_action(CurrentState, Action, V, Y, W, U, Distance),
+    
+    % Применение действия
+    apply_action(Action, CurrentState, NextState, ActionTime),
+    
+    % Проверка, что не возвращаемся в уже посещенное состояние
+    \+ member(NextState, Visited),
+    
+    % Рекурсивный поиск из нового состояния
+    NewTimeAcc is TimeAcc + ActionTime,
+    travel(NextState, FinalState, V, Y, W, U, Distance, Actions, [CurrentState|Visited], NewTimeAcc, TotalTime).
+
+% Возможные действия
+possible_action(State, Action, V, Y, W, U, Distance) :-
+    % Выбор двух путешественников для перемещения
+    select_two_travelers(State, Traveler1, Traveler2),
+    
+    % Определение типа перемещения
+    determine_action_type(Traveler1, Traveler2, ActionType),
+    
+    % Определение скорости перемещения
+    action_speed(ActionType, Traveler1, Traveler2, V, Y, W, U, Speed),
+    
+    % Проверка, что перемещение возможно
+    (ActionType = ride_bike -> 
+        traveler_location(Traveler1, Loc), Loc \= b
+    ; true),
+    
+    % Создание действия
+    Action = action(Traveler1, Traveler2, ActionType, Speed, Distance).
+
+% Выбор двух путешественников для совместного действия
+select_two_travelers(State, Traveler1, Traveler2) :-
+    member(Traveler1, State),
+    member(Traveler2, State),
+    Traveler1 \= Traveler2.
+
+% Определение типа действия
+determine_action_type(Traveler1, Traveler2, ActionType) :-
+    traveler_vehicle(Traveler1, V1),
+    traveler_vehicle(Traveler2, V2),
+    determine_action_type(V1, V2, ActionType).
+
+determine_action_type(bike, bike, ride_bike) :- !.
+determine_action_type(bike, broken_bike, transport_broken) :- !.
+determine_action_type(broken_bike, bike, transport_broken) :- !.
+determine_action_type(bike, none, walk_with_bike) :- !.
+determine_action_type(none, bike, walk_with_bike) :- !.
+determine_action_type(none, none, walk) :- !.
+determine_action_type(none, broken_bike, walk) :- !.
+determine_action_type(broken_bike, none, walk) :- !.
+
+% Определение скорости для действия
+action_speed(ride_bike, _, _, V, _, _, _, V) :- !.
+action_speed(transport_broken, _, _, _, Y, _, _, Y) :- !.
+action_speed(walk_with_bike, _, _, _, _, _, U, U) :- !.
+action_speed(walk, _, _, _, _, W, _, W) :- !.
+
+% Применение действия к состоянию
+apply_action(action(T1, T2, ActionType, Speed, Distance), State, NewState, Time) :-
+    % Вычисление времени перемещения (перемещаемся до пункта Б)
+    (traveler_location(T1, a) -> 
+        Time is Distance / Speed
+    ; 
+        Time is Distance / Speed
+    ),
+    
+    % Обновление состояния путешественников
+    update_traveler(T1, ActionType, State, State1),
+    update_traveler(T2, ActionType, State1, NewState).
+
+% Обновление состояния путешественника после действия
+update_traveler(Traveler, ActionType, State, NewState) :-
+    traveler_id(Traveler, ID),
+    (ActionType = ride_bike ->
+        % Оба перемещаются на велосипедах в пункт Б
+        replace_in_state(State, traveler(ID, a, bike), traveler(ID, b, bike), NewState)
+    ; ActionType = transport_broken ->
+        % Один везет сломанный велосипед
+        (traveler_vehicle(Traveler, bike) ->
+            replace_in_state(State, traveler(ID, a, bike), traveler(ID, b, bike), NewState)
+        ;
+            replace_in_state(State, traveler(ID, a, broken_bike), traveler(ID, b, broken_bike), NewState)
+        )
+    ; ActionType = walk_with_bike ->
+        % Пешеход ведет велосипед
+        (traveler_vehicle(Traveler, bike) ->
+            replace_in_state(State, traveler(ID, a, bike), traveler(ID, b, none), NewState)
+        ;
+            replace_in_state(State, traveler(ID, a, none), traveler(ID, b, bike), NewState)
+        )
+    ; % walk
+        % Просто идут пешком
+        replace_in_state(State, traveler(ID, a, none), traveler(ID, b, none), NewState)
+    ).
+
+% Вспомогательные предикаты для работы с состояниями
+traveler_id(traveler(ID, _, _), ID).
+traveler_location(traveler(_, Loc, _), Loc).
+traveler_vehicle(traveler(_, _, Vehicle), Vehicle).
+
+% Замена элемента в состоянии
+replace_in_state([], _, _, []) :- !.
+replace_in_state([X|Xs], Old, New, [New|Ys]) :- X == Old, !, replace_in_state(Xs, Old, New, Ys).
+replace_in_state([X|Xs], Old, New, [X|Ys]) :- replace_in_state(Xs, Old, New, Ys).
+
+% Печать плана перемещения
+print_plan([]).
+print_plan([Action|Actions]) :-
+    print_action(Action),
+    print_plan(Actions).
+
+print_action(action(T1, T2, Type, Speed, _)) :-
+    traveler_id(T1, ID1),
+    traveler_id(T2, ID2),
+    format('Путешественники ~w и ~w выполняют действие "~w" со скоростью ~2f км/ч~n', 
+           [ID1, ID2, Type, Speed]).

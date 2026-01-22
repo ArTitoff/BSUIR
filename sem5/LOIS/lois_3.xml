@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<indexing>
+ <object alt="" name="Изображение1" object_type="graphic"/>
+ <object alt="" name="Изображение2" object_type="graphic"/>
+ <object alt="" name="Изображение3" object_type="graphic"/>
+ <object alt="" name="Изображение4" object_type="graphic"/>
+ <object alt="" name="Изображение5" object_type="graphic"/>
+ <object alt="" name="Изображение12" object_type="graphic"/>
+ <object alt="" name="Изображение13" object_type="graphic"/>
+ <object alt="" name="Изображение6" object_type="graphic"/>
+ <object alt="" name="Изображение7" object_type="graphic"/>
+ <object alt="" name="Изображение8" object_type="graphic"/>
+ <object alt="" name="Изображение9" object_type="graphic"/>
+ <object alt="" name="Изображение10" object_type="graphic"/>
+ <object alt="" name="Изображение11" object_type="graphic"/>
+ <paragraph index="48" node_type="writer">Министерство образования Республики Беларусь</paragraph>
+ <paragraph index="50" node_type="writer">Учреждение образования</paragraph>
+ <paragraph index="51" node_type="writer">БЕЛОРУССКИЙ ГОСУДАРСТВЕННЫЙ УНИВЕРСИТЕТ</paragraph>
+ <paragraph index="52" node_type="writer">ИНФОРМАТИКИ И РАДИОЭЛЕКТРОНИКИ</paragraph>
+ <paragraph index="55" node_type="writer">		Факультет    информационных технологий и управления</paragraph>
+ <paragraph index="56" node_type="writer">		Кафедра       интеллектуальных информационных технологий</paragraph>
+ <paragraph index="63" node_type="writer">ОТЧЁТ</paragraph>
+ <paragraph index="64" node_type="writer">по лабораторной работе №3</paragraph>
+ <paragraph index="65" node_type="writer">по дисциплине</paragraph>
+ <paragraph index="67" node_type="writer">ЛОГИЧЕСКИЕ ОСНОВЫ ИНТЕЛЛЕКТУАЛЬНЫХ</paragraph>
+ <paragraph index="68" node_type="writer">СИСТЕМ</paragraph>
+ <paragraph index="79" node_type="writer">Студенты гр. 321703                                                                                               Головач В.Д.</paragraph>
+ <paragraph index="80" node_type="writer">											Остров М.А.</paragraph>
+ <paragraph index="81" node_type="writer">											Титов А.В.</paragraph>
+ <paragraph index="83" node_type="writer">                                                             </paragraph>
+ <paragraph index="84" node_type="writer">Проверил:                                                                                                                В. П. Ивашенко</paragraph>
+ <paragraph index="97" node_type="writer">Минск 2025</paragraph>
+ <paragraph index="98" node_type="writer">ХОД ВЫПОЛНЕНИЯ ЛАБОРАТОРНОЙ</paragraph>
+ <paragraph index="99" node_type="writer">РАБОТЫ</paragraph>
+ <paragraph index="100" node_type="writer">Вариант 3</paragraph>
+ <paragraph index="102" node_type="writer">Тема:  Программирование операций обработки и преобразования формул прикладных и неклассических логик.</paragraph>
+ <paragraph index="104" node_type="writer">Цель: Приобрести навыки программирования алгоритмов обработки данных в неклассических логических моделях решения задач.</paragraph>
+ <paragraph index="106" node_type="writer">Задание: Реализовать прямой нечеткий логический вывод, используя треугольную норму граничного произведения и нечеткую импликацию Лукасевича.</paragraph>
+ <paragraph index="108" node_type="writer">Описание:</paragraph>
+ <paragraph index="109" node_type="writer">Задача заключается в написании алгоритма прямого нечеткого логического вывода, используя импликацию Лукасевича. Входом программы является файл, содержащий множество нечётких правил и фактов. Для реализация программы использовался язык программирования Python.</paragraph>
+ <paragraph index="110" node_type="writer">Были использованы следующие структуры данных:</paragraph>
+ <paragraph index="111" node_type="writer">– Список</paragraph>
+ <paragraph index="112" node_type="writer">– Множество</paragraph>
+ <paragraph index="113" node_type="writer">– Словарь</paragraph>
+ <paragraph index="114" node_type="writer">– Кортеж</paragraph>
+ <paragraph index="117" node_type="writer">Теоретические сведения:</paragraph>
+ <paragraph index="118" node_type="writer">	Правило – импликация, которая выражает зависимость между наблюдаемыми причинами и следствиями.</paragraph>
+ <paragraph index="119" node_type="writer">	Прямой нечеткий логический вывод – композиция между двумя нечеткими предикатами, один из которых рассматривается как унарный (посылка), а второй бинарный (импликация фактов по заданному правилу).</paragraph>
+ <paragraph index="120" node_type="writer">	Нечеткое высказывание – утверждение, в котором истинность оценивается с использованием степени принадлежности к нечеткому множеству.</paragraph>
+ <paragraph index="121" node_type="writer">	Нечеткий предикат – это нечеткое множество, значения которого интерпретируются как значения истинности.</paragraph>
+ <paragraph index="122" node_type="writer">	Импликация – бинарная логическая связка, по своему применению приближенная к союзам «если..., то...».</paragraph>
+ <paragraph index="123" node_type="writer">	Нечеткая импликация нечетких высказываний - это операция, которая</paragraph>
+ <paragraph index="124" node_type="writer">определяет отношение между двумя нечеткими высказываниями.</paragraph>
+ <paragraph index="126" node_type="writer">Формат базы знаний</paragraph>
+ <paragraph index="127" node_type="writer">&lt;база знаний&gt;::= &lt;список фактов&gt;|&lt;список правил&gt;&lt;новая строка&gt;&lt;список правил&gt;</paragraph>
+ <paragraph index="128" node_type="writer">&lt;список фактов&gt;::= &lt;факт&gt;|&lt;факт&gt;&lt;новая строка&gt;&lt;список фактов&gt;</paragraph>
+ <paragraph index="129" node_type="writer">&lt;список правил&gt;::= &lt;правило&gt;|&lt;правило&gt;&lt;новая строка&gt;&lt;список правил&gt;</paragraph>
+ <paragraph index="130" node_type="writer">&lt;факт&gt;::= &lt;имя нечёткого предиката&gt;&lt;равенство&gt;&lt;нечёткое множество&gt;</paragraph>
+ <paragraph index="131" node_type="writer">&lt;правило&gt;::= &lt;имя нечёткого предиката&gt;&lt;нечеткая импликация&gt;&lt;имя нечёткого предиката&gt;.</paragraph>
+ <paragraph index="132" node_type="writer">&lt;нечёткое множество&gt;::=&lt;открывающаяся фигурная скобка&gt;&lt;список пар нечёткой принадлежности&gt;&lt;закрывающаяся фигурная скобка&gt;</paragraph>
+ <paragraph index="133" node_type="writer">&lt;список пар нечёткой принадлежности&gt;::=&lt;пара нечёткой принадлежности&gt;|&lt;пара нечёткой принадлежности&gt;&lt;запятая&gt;&lt;список пар нечёткой принадлежности&gt;</paragraph>
+ <paragraph index="134" node_type="writer">&lt;пара нечёткой принадлежности&gt;::=&lt;открывающаяся угловая скобка&gt;&lt;элемент&gt;&lt;запятая&gt;&lt;степень принадлежности&gt;&lt;закрывающаяся угловая скобка&gt;</paragraph>
+ <paragraph index="135" node_type="writer">&lt;имя нечеткого предиката&gt;::= &lt;имя&gt;&lt;открывающаяся полукруглая скобка&gt;&lt;имя&gt;&lt;закрывающаяся полукруглая скобка&gt;</paragraph>
+ <paragraph index="136" node_type="writer">&lt;элемент&gt;::=&lt;имя&gt;</paragraph>
+ <paragraph index="137" node_type="writer">&lt;имя&gt;::=&lt;буква&gt;|&lt;буква&gt;&lt;символы&gt;</paragraph>
+ <paragraph index="138" node_type="writer">&lt;символы&gt;::=&lt;символ&gt;|&lt;символ&gt;&lt;символы&gt;</paragraph>
+ <paragraph index="139" node_type="writer">&lt;степень принадлежности&gt;::=&lt;действительное число с 0 по 1&gt;</paragraph>
+ <paragraph index="140" node_type="writer">&lt;символы&gt;::=&lt;буква&gt;|&lt;цифра&gt;</paragraph>
+ <paragraph index="141" node_type="writer">&lt;множество&gt;::=&lt;ориентированное множество&gt; |</paragraph>
+ <paragraph index="142" node_type="writer">&lt;неориентированное множество&gt;</paragraph>
+ <paragraph index="143" node_type="writer">&lt;неориентированное множество&gt;::={ &lt;список элементов&gt; }</paragraph>
+ <paragraph index="144" node_type="writer">&lt;ориентированное множество&gt;::=(&lt;элемент&gt;,&lt;список элементов&gt;)</paragraph>
+ <paragraph index="145" node_type="writer">&lt;список элементов&gt;::=&lt;элемент&gt; ,&lt;элемент&gt; ,&lt;элемент&gt;</paragraph>
+ <paragraph index="146" node_type="writer">&lt;имя нечёткого множества&gt;::=&lt;имя&gt;</paragraph>
+ <paragraph index="147" node_type="writer">&lt;действительное число с 0 по 1&gt;::=&lt;единица&gt;|&lt;единица&gt;&lt;точка&gt;&lt;нули&gt;|&lt;действительное число с 0 до 1&gt;</paragraph>
+ <paragraph index="148" node_type="writer">&lt;действительное число с 0 до 1&gt;::=&lt;ноль&gt;|&lt;ноль&gt;&lt;точка&gt;&lt;цифры&gt;</paragraph>
+ <paragraph index="149" node_type="writer">&lt;нули&gt;::=&lt;ноль&gt;|&lt;ноль&gt;&lt;нули&gt;</paragraph>
+ <paragraph index="150" node_type="writer">&lt;цифра&gt;::=&lt;цифра&gt;|&lt;цифра&gt;&lt;цифры&gt;</paragraph>
+ <paragraph index="151" node_type="writer">&lt;символ&gt;::=&lt;буква&gt;|&lt;цифра&gt;</paragraph>
+ <paragraph index="152" node_type="writer">&lt;цифра&gt;::=0|...|9</paragraph>
+ <paragraph index="153" node_type="writer">&lt;буква&gt;::=A|...|z</paragraph>
+ <paragraph index="154" node_type="writer">&lt;единица&gt;::= 1</paragraph>
+ <paragraph index="155" node_type="writer">&lt;ноль&gt;::= 0</paragraph>
+ <paragraph index="156" node_type="writer">&lt;точка&gt;::= .</paragraph>
+ <paragraph index="157" node_type="writer">&lt;запятая&gt;::= ,</paragraph>
+ <paragraph index="158" node_type="writer">&lt;равенство&gt;::= =</paragraph>
+ <paragraph index="159" node_type="writer">&lt;нечеткая импликация&gt;::= ~&gt;</paragraph>
+ <paragraph index="160" node_type="writer">&lt;открывающаяся угловая скобка&gt;::= &lt;</paragraph>
+ <paragraph index="161" node_type="writer">&lt;закрывающаяся угловая скобка&gt;::= &gt;</paragraph>
+ <paragraph index="162" node_type="writer">&lt;открывающаяся фигурная скобка&gt;::= {</paragraph>
+ <paragraph index="163" node_type="writer">&lt;закрывающаяся фигурная скобка&gt;::= }</paragraph>
+ <paragraph index="164" node_type="writer">&lt;открывающаяся полукруглая скобка&gt;::= (</paragraph>
+ <paragraph index="165" node_type="writer">&lt;закрывающаяся полукруглая скобка&gt;::= )</paragraph>
+ <paragraph index="185" node_type="writer">Схемы функций программы:</paragraph>
+ <paragraph index="204" node_type="writer">Рис.  Функция implication()</paragraph>
+ <paragraph index="209" node_type="writer">Рис.  Функция composition()</paragraph>
+ <paragraph index="216" node_type="writer">Рис.  Функция suitable_sets()</paragraph>
+ <paragraph index="219" node_type="writer">Рис. .1 Функция fuzzy_derivation()</paragraph>
+ <paragraph index="225" node_type="writer">Рис. 4.2 Функция fuzzy_derivation()</paragraph>
+ <paragraph index="239" node_type="writer">Рис. 5 Функция get_variables()</paragraph>
+ <paragraph index="250" node_type="writer">Рис. 6 Функция inference()</paragraph>
+ <paragraph index="257" node_type="writer">Демонстрация результатов работы программы</paragraph>
+ <paragraph index="262" node_type="writer">Рис. 7 Пример 1</paragraph>
+ <paragraph index="265" node_type="writer">Рис. 8 Результат 1</paragraph>
+ <paragraph index="272" node_type="writer">Рис. 9 Пример 2</paragraph>
+ <paragraph index="278" node_type="writer">Рис. 10 Результат 2</paragraph>
+ <paragraph index="284" node_type="writer">Рис. 11 Пример 3</paragraph>
+ <paragraph index="287" node_type="writer">Рис. 12 Результат 3</paragraph>
+ <paragraph index="288" node_type="writer">Ответы на вопросы:</paragraph>
+ <paragraph index="289" node_type="writer">1. при каких A'(x) можно получить субнормальное нечеткое множество B'(y) когда посылка и заключение нечеткой импликации являются нормальными нечеткими множествами.</paragraph>
+ <paragraph index="290" node_type="writer">Ответ: B'(y) субнормально, когда A'(x) субнормально во всех точках x, где значения принадлежности A(x) и B(y) максимально</paragraph>
+ <paragraph index="291" node_type="writer"> </paragraph>
+ <paragraph index="292" node_type="writer">2. при каких A'(x) можно получить нормальное нечеткое множество B'(y) когда посылка и заключение нечеткой импликации являются субнормальными нечеткими множествами
+Ответ: Для получения нормального B'(y) необходимо и достаточно, чтобы A'(x) было нормальным хотя бы в одной точке x, где значение принадлежности посылки A(x) не превосходит значения заключения B(y) для некоторого y</paragraph>
+ <paragraph index="294" node_type="writer">3. можно ли получить B'(y)= B(y) когда посылка и заключения нормальные?
+Ответ:Такое возможно только в одном частном случае: если A′(x)=A(x)</paragraph>
+ <paragraph index="296" node_type="writer">4. можно ли получить B'(y)= B(y) когда посылка и заключения субнормальные?
+Ответ: Да, получить B'(y) = B(y) при субнормальных посылке и заключении можно в частном случае, если A'(x) = A(x) и все значения принадлежности A должны быть не выше значений B</paragraph>
+ <paragraph index="298" node_type="writer">5. можно ли получить B'(y)= B(y) когда посылка нормальное нечеткое множество а заключение субнормальное?
+Ответ: Да, если A'(x) = A(x)</paragraph>
+ <paragraph index="300" node_type="writer">6. можно ли получить B'(y)= B(y) когда посылка субнормальное нечеткое множество а заключение нормальное?</paragraph>
+ <paragraph index="301" node_type="writer">Ответ: Нет,  поскольку максимальное значение B′(y) будет ограничено максимальным значением принадлежности A(x), которое меньше 1, а B(y) достигает 1.</paragraph>
+ <paragraph index="307" node_type="writer">ВЫВОД</paragraph>
+ <paragraph index="308" node_type="writer">В процессе выполнения лабораторной работы, мы получили навыки реализации нечёткой логики, а именно прямого нечёткого логического вывода при помощи программирования. В рамках данной работы были разработаны модули, отвечающие за анализ исходного текста базы знаний, а также непосредственно алгоритм прямого нечёткого логического вывода. При помощи разработанного программного продукта нам удалось построить корректные выводы для нескольких случаев, а также дать ответы на контрольные вопросы, прилагающиеся к лабораторной работе.</paragraph>
+ <paragraph index="309" node_type="writer">Теоретические сведения были взяты из следующих источников:</paragraph>
+ <paragraph index="310" node_type="writer">Логические основы интеллектуальных систем. Практикум: учебно-методическое пособие / В. В. Голенков, В. П. Ивашенко, Д. Г. Колб, К. А. Уваров. – Минск: БГУИР, 2011.</paragraph>
+ <paragraph index="311" node_type="writer">https://github.com/rastsislaux</paragraph>
+</indexing>

@@ -1,0 +1,10 @@
+@startuml
+class Consultant {
+    show_questions()
+    get_answer()
+    choice_question()
+        questions : Dict[int, Tuple[str, str]] 
+    __init__(questions: Dict[int, Tuple[str, str]] )
+}
+Consultant --> Tuple
+@enduml

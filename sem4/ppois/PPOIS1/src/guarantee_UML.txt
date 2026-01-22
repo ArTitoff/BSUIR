@@ -1,0 +1,7 @@
+@startuml
+class Guarantee {
+    get_term()
+        __term
+    __init__()
+}
+@enduml

@@ -1,0 +1,33 @@
+cat <= nrel_inclusion: animal;
+    => nrel_main_idtf:[кот] (*<- russian_leng;;*);[cat](*<- english_leng;;*);
+    => nrel_activity: hunting;
+    => nrel_may_have: ...
+    (*
+       -> concept_wool;;
+       -> concept_claws;;
+       -> concept_tail;;
+     *);
+    -> Cat_Vasya; Cat_Petya;
+    <- sc_key_element: ...
+    (*
+       <- explanation;;
+       => constant_used: …
+       (*
+         -> pet;;
+        *);;
+       => translation: ...
+       (*
+         -> [Домашнее животное, одно из наиболее популярных «животных-компаньонов»];;
+         (*
+           <- russian_leng;;
+          *);;
+        *);;
+     *);;
+
+Cat_Vasya <=> brother:Cat_Petya;;
+
+
+
+
+
+

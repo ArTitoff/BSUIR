@@ -1,0 +1,507 @@
+<?xml version="1.0" ?>
+<clients>
+  <client>
+    <name>Sergey</name>
+    <surname>Volkov</surname>
+    <otchestvo>Petrovich</otchestvo>
+    <account_num>112233</account_num>
+    <address>Minsk, str.Nezavisimosti 15</address>
+    <mob_telephone>+3752911</mob_telephone>
+    <home_telephone>111-222</home_telephone>
+  </client>
+  <client>
+    <name>Olga</name>
+    <surname>Kozlova</surname>
+    <otchestvo>Ivanovna</otchestvo>
+    <account_num>223344</account_num>
+    <address>Grodno, str.Sovetskaya 22</address>
+    <mob_telephone>+3752922</mob_telephone>
+    <home_telephone>222-333</home_telephone>
+  </client>
+  <client>
+    <name>Dmitry</name>
+    <surname>Novikov</surname>
+    <otchestvo>Sergeevich</otchestvo>
+    <account_num>334455</account_num>
+    <address>Brest, str.Gogolya 7</address>
+    <mob_telephone>+3752933</mob_telephone>
+    <home_telephone>333-444</home_telephone>
+  </client>
+  <client>
+    <name>Elena</name>
+    <surname>Morozova</surname>
+    <otchestvo>Viktorovna</otchestvo>
+    <account_num>445566</account_num>
+    <address>Vitebsk, str.Lenina 12</address>
+    <mob_telephone>+3752944</mob_telephone>
+    <home_telephone>444-555</home_telephone>
+  </client>
+  <client>
+    <name>Alexandr</name>
+    <surname>Pavlov</surname>
+    <otchestvo>Nikolaevich</otchestvo>
+    <account_num>556677</account_num>
+    <address>Gomel, str.Pushkina 9</address>
+    <mob_telephone>+3752955</mob_telephone>
+    <home_telephone>555-666</home_telephone>
+  </client>
+  <client>
+    <name>Tatiana</name>
+    <surname>Semenova</surname>
+    <otchestvo>Olegovna</otchestvo>
+    <account_num>667788</account_num>
+    <address>Mogilev, str.Kirova 18</address>
+    <mob_telephone>+3752966</mob_telephone>
+    <home_telephone>666-777</home_telephone>
+  </client>
+  <client>
+    <name>Andrey</name>
+    <surname>Vasiliev</surname>
+    <otchestvo>Dmitrievich</otchestvo>
+    <account_num>778899</account_num>
+    <address>Baranovichi, str.Mira 5</address>
+    <mob_telephone>+3752977</mob_telephone>
+    <home_telephone>777-888</home_telephone>
+  </client>
+  <client>
+    <name>Natalia</name>
+    <surname>Fedorova</surname>
+    <otchestvo>Alexandrovna</otchestvo>
+    <account_num>889900</account_num>
+    <address>Borisov, str.Sportivnaya 3</address>
+    <mob_telephone>+3752988</mob_telephone>
+    <home_telephone>888-999</home_telephone>
+  </client>
+  <client>
+    <name>Viktor</name>
+    <surname>Zaitsev</surname>
+    <otchestvo>Igorevich</otchestvo>
+    <account_num>990011</account_num>
+    <address>Soligorsk, str.Shaletnaya 11</address>
+    <mob_telephone>+3752999</mob_telephone>
+    <home_telephone>999-000</home_telephone>
+  </client>
+  <client>
+    <name>Marina</name>
+    <surname>Orlova</surname>
+    <otchestvo>Vladimirovna</otchestvo>
+    <account_num>001122</account_num>
+    <address>Molodechno, str.Zaslonova 6</address>
+    <mob_telephone>+3753000</mob_telephone>
+    <home_telephone>000-111</home_telephone>
+  </client>
+  <client>
+    <name>Pavel</name>
+    <surname>Gusev</surname>
+    <otchestvo>Anatolievich</otchestvo>
+    <account_num>112200</account_num>
+    <address>Pinsk, str.Komsomolskaya 3</address>
+    <mob_telephone>+3753011</mob_telephone>
+    <home_telephone>100-200</home_telephone>
+  </client>
+  <client>
+    <name>Yulia</name>
+    <surname>Belyaeva</surname>
+    <otchestvo>Sergeevna</otchestvo>
+    <account_num>223300</account_num>
+    <address>Lida, str.Sovetskaya 25</address>
+    <mob_telephone>+3753022</mob_telephone>
+    <home_telephone>200-300</home_telephone>
+  </client>
+  <client>
+    <name>Igor</name>
+    <surname>Mikhailov</surname>
+    <otchestvo>Viktorovich</otchestvo>
+    <account_num>334400</account_num>
+    <address>Slonim, str.Krasnoarmeyskaya 8</address>
+    <mob_telephone>+3753033</mob_telephone>
+    <home_telephone>300-400</home_telephone>
+  </client>
+  <client>
+    <name>Ekaterina</name>
+    <surname>Kuzmina</surname>
+    <otchestvo>Andreevna</otchestvo>
+    <account_num>445500</account_num>
+    <address>Polotsk, str.Efrosini Polotskoy 1</address>
+    <mob_telephone>+3753044</mob_telephone>
+    <home_telephone>400-500</home_telephone>
+  </client>
+  <client>
+    <name>Roman</name>
+    <surname>Petrov</surname>
+    <otchestvo>Olegovich</otchestvo>
+    <account_num>556600</account_num>
+    <address>Novopolotsk, str.Molodezhnaya 14</address>
+    <mob_telephone>+3753055</mob_telephone>
+    <home_telephone>500-600</home_telephone>
+  </client>
+  <client>
+    <name>Anastasia</name>
+    <surname>Voronina</surname>
+    <otchestvo>Dmitrievna</otchestvo>
+    <account_num>667700</account_num>
+    <address>Zhodino, str.Gagarina 17</address>
+    <mob_telephone>+3753066</mob_telephone>
+    <home_telephone>600-700</home_telephone>
+  </client>
+  <client>
+    <name>Artem</name>
+    <surname>Krylov</surname>
+    <otchestvo>Vladimirovich</otchestvo>
+    <account_num>778800</account_num>
+    <address>Svetlogorsk, str.Pobedy 21</address>
+    <mob_telephone>+3753077</mob_telephone>
+    <home_telephone>700-800</home_telephone>
+  </client>
+  <client>
+    <name>Valentina</name>
+    <surname>Egorova</surname>
+    <otchestvo>Nikolaevna</otchestvo>
+    <account_num>889900</account_num>
+    <address>Rechitsa, str.Naberezhnaya 5</address>
+    <mob_telephone>+3753088</mob_telephone>
+    <home_telephone>800-900</home_telephone>
+  </client>
+  <client>
+    <name>Konstantin</name>
+    <surname>Komarov</surname>
+    <otchestvo>Sergeevich</otchestvo>
+    <account_num>990000</account_num>
+    <address>Slutsk, str.Kirova 12</address>
+    <mob_telephone>+3753099</mob_telephone>
+    <home_telephone>900-000</home_telephone>
+  </client>
+  <client>
+    <name>Larisa</name>
+    <surname>Gavrilova</surname>
+    <otchestvo>Viktorovna</otchestvo>
+    <account_num>001111</account_num>
+    <address>Orsha, str.Mira 19</address>
+    <mob_telephone>+3753100</mob_telephone>
+    <home_telephone>010-101</home_telephone>
+  </client>
+  <client>
+    <name>Denis</name>
+    <surname>Bogdanov</surname>
+    <otchestvo>Igorevich</otchestvo>
+    <account_num>112222</account_num>
+    <address>Bobruisk, str.Socialisticheskaya 7</address>
+    <mob_telephone>+3753111</mob_telephone>
+    <home_telephone>101-202</home_telephone>
+  </client>
+  <client>
+    <name>Galina</name>
+    <surname>Davydova</surname>
+    <otchestvo>Petrovna</otchestvo>
+    <account_num>223333</account_num>
+    <address>Mozyr, str.Pervomayskaya 23</address>
+    <mob_telephone>+3753122</mob_telephone>
+    <home_telephone>202-303</home_telephone>
+  </client>
+  <client>
+    <name>Evgeny</name>
+    <surname>Sorokin</surname>
+    <otchestvo>Olegovich</otchestvo>
+    <account_num>334444</account_num>
+    <address>Kobrin, str.Suvorova 9</address>
+    <mob_telephone>+3753133</mob_telephone>
+    <home_telephone>303-404</home_telephone>
+  </client>
+  <client>
+    <name>Tamara</name>
+    <surname>Kolesnikova</surname>
+    <otchestvo>Vladimirovna</otchestvo>
+    <account_num>445555</account_num>
+    <address>Bereza, str.Lenina 15</address>
+    <mob_telephone>+3753144</mob_telephone>
+    <home_telephone>404-505</home_telephone>
+  </client>
+  <client>
+    <name>Gennady</name>
+    <surname>Kuznetsov</surname>
+    <otchestvo>Nikolaevich</otchestvo>
+    <account_num>556666</account_num>
+    <address>Luninets, str.Pionerskaya 4</address>
+    <mob_telephone>+3753155</mob_telephone>
+    <home_telephone>505-606</home_telephone>
+  </client>
+  <client>
+    <name>Lyubov</name>
+    <surname>Vinogradova</surname>
+    <otchestvo>Mihaylovna</otchestvo>
+    <account_num>667777</account_num>
+    <address>Stolin, str.Sovetskaya 11</address>
+    <mob_telephone>+3753166</mob_telephone>
+    <home_telephone>606-707</home_telephone>
+  </client>
+  <client>
+    <name>Vladimir</name>
+    <surname>Belov</surname>
+    <otchestvo>Anatolievich</otchestvo>
+    <account_num>778888</account_num>
+    <address>Drogichin, str.Komsomolskaya 6</address>
+    <mob_telephone>+3753177</mob_telephone>
+    <home_telephone>707-808</home_telephone>
+  </client>
+  <client>
+    <name>Zinaida</name>
+    <surname>Krylova</surname>
+    <otchestvo>Vasilevna</otchestvo>
+    <account_num>889999</account_num>
+    <address>Ivatsevichi, str.Zelenaya 8</address>
+    <mob_telephone>+3753188</mob_telephone>
+    <home_telephone>808-909</home_telephone>
+  </client>
+  <client>
+    <name>Stanislav</name>
+    <surname>Mironov</surname>
+    <otchestvo>Sergeevich</otchestvo>
+    <account_num>990000</account_num>
+    <address>Gantsevichi, str.Sadovaya 3</address>
+    <mob_telephone>+3753199</mob_telephone>
+    <home_telephone>909-010</home_telephone>
+  </client>
+  <client>
+    <name>Raisa</name>
+    <surname>Gromova</surname>
+    <otchestvo>Alexandrovna</otchestvo>
+    <account_num>001122</account_num>
+    <address>Volkovysk, str.Gorkogo 14</address>
+    <mob_telephone>+3753200</mob_telephone>
+    <home_telephone>010-121</home_telephone>
+  </client>
+  <client>
+    <name>Boris</name>
+    <surname>Filippov</surname>
+    <otchestvo>Vladimirovich</otchestvo>
+    <account_num>112233</account_num>
+    <address>Rahachow, str.Pervomayskaya 9</address>
+    <mob_telephone>+3753211</mob_telephone>
+    <home_telephone>121-232</home_telephone>
+  </client>
+  <client>
+    <name>Nadezhda</name>
+    <surname>Polyakova</surname>
+    <otchestvo>Igorevna</otchestvo>
+    <account_num>223344</account_num>
+    <address>Byaroza, str.Lesnaya 7</address>
+    <mob_telephone>+3753222</mob_telephone>
+    <home_telephone>232-343</home_telephone>
+  </client>
+  <client>
+    <name>Vitaly</name>
+    <surname>Baranov</surname>
+    <otchestvo>Anatolievich</otchestvo>
+    <account_num>334455</account_num>
+    <address>Klichaw, str.Sovetskaya 12</address>
+    <mob_telephone>+3753233</mob_telephone>
+    <home_telephone>343-454</home_telephone>
+  </client>
+  <client>
+    <name>Alina</name>
+    <surname>Vlasova</surname>
+    <otchestvo>Dmitrievna</otchestvo>
+    <account_num>445566</account_num>
+    <address>Chashniki, str.Zavodskaya 5</address>
+    <mob_telephone>+3753244</mob_telephone>
+    <home_telephone>454-565</home_telephone>
+  </client>
+  <client>
+    <name>Arkady</name>
+    <surname>Zaitsev</surname>
+    <otchestvo>Vasilevich</otchestvo>
+    <account_num>556677</account_num>
+    <address>Braslaw, str.Ozer</address>
+    <mob_telephone>+3753255</mob_telephone>
+    <home_telephone>565-676</home_telephone>
+  </client>
+  <client>
+    <name>Valentina</name>
+    <surname>Kozlova</surname>
+    <otchestvo>Olegovna</otchestvo>
+    <account_num>667788</account_num>
+    <address>Vileika, str.Zaslonova 8</address>
+    <mob_telephone>+3753266</mob_telephone>
+    <home_telephone>676-787</home_telephone>
+  </client>
+  <client>
+    <name>Leonid</name>
+    <surname>Orlov</surname>
+    <otchestvo>Viktorovich</otchestvo>
+    <account_num>778899</account_num>
+    <address>Smorgon, str.Krasnaya 15</address>
+    <mob_telephone>+3753277</mob_telephone>
+    <home_telephone>787-898</home_telephone>
+  </client>
+  <client>
+    <name>Klara</name>
+    <surname>Egorova</surname>
+    <otchestvo>Mihaylovna</otchestvo>
+    <account_num>889900</account_num>
+    <address>Krupki, str.Sovetskaya 22</address>
+    <mob_telephone>+3753288</mob_telephone>
+    <home_telephone>898-909</home_telephone>
+  </client>
+  <client>
+    <name>Rodion</name>
+    <surname>Voronov</surname>
+    <otchestvo>Anatolievich</otchestvo>
+    <account_num>990011</account_num>
+    <address>Myadel, str.Pionerskaya 7</address>
+    <mob_telephone>+3753299</mob_telephone>
+    <home_telephone>909-010</home_telephone>
+  </client>
+  <client>
+    <name>Eleonora</name>
+    <surname>Kalinina</surname>
+    <otchestvo>Sergeevna</otchestvo>
+    <account_num>001133</account_num>
+    <address>Zaslavl, str.Molodezhnaya 11</address>
+    <mob_telephone>+3753300</mob_telephone>
+    <home_telephone>010-131</home_telephone>
+  </client>
+  <client>
+    <name>Vsevolod</name>
+    <surname>Gorbachev</surname>
+    <otchestvo>Dmitrievich</otchestvo>
+    <account_num>112244</account_num>
+    <address>Starye Dorogi, str.Lesnaya 5</address>
+    <mob_telephone>+3753311</mob_telephone>
+    <home_telephone>131-242</home_telephone>
+  </client>
+  <client>
+    <name>Zlata</name>
+    <surname>Zhukova</surname>
+    <otchestvo>Vladimirovna</otchestvo>
+    <account_num>223355</account_num>
+    <address>Cherven, str.Sadovaya 9</address>
+    <mob_telephone>+3753322</mob_telephone>
+    <home_telephone>242-353</home_telephone>
+  </client>
+  <client>
+    <name>Gleb</name>
+    <surname>Kiselev</surname>
+    <otchestvo>Igorevich</otchestvo>
+    <account_num>334466</account_num>
+    <address>Kostyukovichi, str.Schorsa 4</address>
+    <mob_telephone>+3753333</mob_telephone>
+    <home_telephone>353-464</home_telephone>
+  </client>
+  <client>
+    <name>Elizaveta</name>
+    <surname>Nikolaeva</surname>
+    <otchestvo>Andreevna</otchestvo>
+    <account_num>445577</account_num>
+    <address>Krichev, str.Pochtovaya 12</address>
+    <mob_telephone>+3753344</mob_telephone>
+    <home_telephone>464-575</home_telephone>
+  </client>
+  <client>
+    <name>Fedor</name>
+    <surname>Polyakov</surname>
+    <otchestvo>Vasilevich</otchestvo>
+    <account_num>556688</account_num>
+    <address>Shklov, str.Naberezhnaya 8</address>
+    <mob_telephone>+3753355</mob_telephone>
+    <home_telephone>575-686</home_telephone>
+  </client>
+  <client>
+    <name>Albina</name>
+    <surname>Vasilieva</surname>
+    <otchestvo>Dmitrievna</otchestvo>
+    <account_num>667799</account_num>
+    <address>Osipovichi, str.Zheleznodorozhnaya 15</address>
+    <mob_telephone>+3753366</mob_telephone>
+    <home_telephone>686-797</home_telephone>
+  </client>
+  <client>
+    <name>Vadim</name>
+    <surname>Fomin</surname>
+    <otchestvo>Olegovich</otchestvo>
+    <account_num>778800</account_num>
+    <address>Gorki, str.Studencheskaya 3</address>
+    <mob_telephone>+3753377</mob_telephone>
+    <home_telephone>797-808</home_telephone>
+  </client>
+  <client>
+    <name>Lilia</name>
+    <surname>Davydova</surname>
+    <otchestvo>Vladimirovna</otchestvo>
+    <account_num>889911</account_num>
+    <address>Dzerzhinsk, str.Kirova 17</address>
+    <mob_telephone>+3753388</mob_telephone>
+    <home_telephone>808-919</home_telephone>
+  </client>
+  <client>
+    <name>Anatoly</name>
+    <surname>Kovalev</surname>
+    <otchestvo>Sergeevich</otchestvo>
+    <account_num>990022</account_num>
+    <address>Fanipol, str.Solnechnaya 6</address>
+    <mob_telephone>+3753399</mob_telephone>
+    <home_telephone>919-020</home_telephone>
+  </client>
+  <client>
+    <name>Nina</name>
+    <surname>Gavrilova</surname>
+    <otchestvo>Alexandrovna</otchestvo>
+    <account_num>001144</account_num>
+    <address>Smolevichi, str.Pushkina 14</address>
+    <mob_telephone>+3753400</mob_telephone>
+    <home_telephone>020-141</home_telephone>
+  </client>
+  <client>
+    <name>Evgeny</name>
+    <surname>Kuzmin</surname>
+    <otchestvo>Olegovich</otchestvo>
+    <account_num>112255</account_num>
+    <address>Zhlobin, str.Gagarina 9</address>
+    <mob_telephone>+3753411</mob_telephone>
+    <home_telephone>141-252</home_telephone>
+  </client>
+  <client>
+    <name>Margarita</name>
+    <surname>Bogdanova</surname>
+    <otchestvo>Vladimirovna</otchestvo>
+    <account_num>223366</account_num>
+    <address>Rogachev, str.Komsomolskaya 11</address>
+    <mob_telephone>+3753422</mob_telephone>
+    <home_telephone>252-363</home_telephone>
+  </client>
+  <client>
+    <name>Arkhip</name>
+    <surname>Komissarov</surname>
+    <otchestvo>Dmitrievich</otchestvo>
+    <account_num>334477</account_num>
+    <address>Lyuban, str.Mira 5</address>
+    <mob_telephone>+3753433</mob_telephone>
+    <home_telephone>363-474</home_telephone>
+  </client>
+  <client>
+    <name>Valeria</name>
+    <surname>Gromova</surname>
+    <otchestvo>Dmitrievna</otchestvo>
+    <account_num>445588</account_num>
+    <address>Klimovichi, str.Sovetskaya 18</address>
+    <mob_telephone>+3753444</mob_telephone>
+    <home_telephone>474-585</home_telephone>
+  </client>
+  <client>
+    <name>Igor</name>
+    <surname>Yermakov</surname>
+    <otchestvo>Leonidovich</otchestvo>
+    <account_num>556699</account_num>
+    <address>Khotimsk, str.Lenina 7</address>
+    <mob_telephone>+3753455</mob_telephone>
+    <home_telephone>585-696</home_telephone>
+  </client>
+  <client>
+    <name>Vera</name>
+    <surname>Makarova</surname>
+    <otchestvo>Mihaylovna</otchestvo>
+    <account_num>667700</account_num>
+    <address>Chausy, str.Pervomayskaya 12</address>
+    <mob_telephone>+3753466</mob_telephone>
+    <home_telephone>696-707</home_telephone>
+  </client>
+</clients>

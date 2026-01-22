@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center">Список покупателей</h1>
+    <a href="{{ url_for('index') }}" class="btn btn-secondary mb-3">На главную</a>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Имя</th>
+                <th>Баланс (BYN)</th>
+                <th>Товары</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for customer in customers %}
+            <tr>
+                <td>{{ customer.get_name() }}</td>
+                <td>{{ customer.get_money() }}</td>
+                <td>
+                    {% set products = customer.get_customer_products() %}
+                    {% if products %}
+                        {% for product in products %}
+                            {{ product.get_name() }}{% if not loop.last %}, {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        Нет покупок
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

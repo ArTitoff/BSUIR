@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Управление автомобилями</h1>
+
+<div class="form-section">
+    <h2>Добавить новый автомобиль</h2>
+    <form method="POST" action="{{ url_for('add_car') }}">
+        <div class="form-group">
+            <label>Номер техпаспорта:</label>
+            <input type="text" name="tech_passport_number" pattern="[A-Za-z0-9]{1,50}" required>
+        </div>
+        <div class="form-group">
+            <label>Госномер:</label>
+            <input type="text" name="license_plate" pattern="[A-Za-z0-9-]{1,15}" required>
+        </div>
+        <div class="form-group">
+            <label>Номер двигателя:</label>
+            <input type="text" name="engine_number" pattern="[A-Za-z0-9]{1,50}" required>
+        </div>
+        <div class="form-group">
+            <label>Цвет:</label>
+            <input type="text" name="color" pattern="[А-Яа-яA-Za-z\s]{1,30}" required>
+        </div>
+        <div class="form-group">
+            <label>Марка:</label>
+            <input type="text" name="brand" pattern="[А-Яа-яA-Za-z0-9\s]{1,50}" required>
+        </div>
+        <div class="form-group">
+            <label>Владелец:</label>
+            <select name="owner_license_number" required>
+                <option value="">Выберите владельца</option>
+                {% for owner in owners %}
+                <option value="{{ owner[0] }}">{{ owner[1] }} ({{ owner[0] }})</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Страна производства двигателя:</label>
+            <input type="text" name="country" pattern="[А-Яа-яA-Za-z\s]{1,30}" required>
+        </div>
+        <div class="form-group">
+            <label>Мощность двигателя (л.с.):</label>
+            <input type="number" name="performance" min="1" max="2000" value="100" required>
+        </div>
+        <button type="submit">Добавить автомобиль</button>
+    </form>
+</div>
+
+<h2>Список автомобилей</h2>
+{% if cars %}
+<table>
+    <thead>
+        <tr>
+            <th>Техпаспорт</th>
+            <th>Госномер</th>
+            <th>Двигатель</th>
+            <th>Цвет</th>
+            <th>Марка</th>
+            <th>Владелец</th>
+            <th>Страна двигателя</th>
+            <th>Мощность</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for car in cars %}
+        <tr>
+            <form method="POST" action="{{ url_for('edit_car') }}">
+            <td>
+                <input type="text" name="tech_passport_number" value="{{ car[0] }}" readonly style="background-color: #f0f0f0;">
+            </td>
+            <td>
+                <input type="text" name="license_plate" value="{{ car[1] }}" pattern="[A-Za-z0-9-]{1,15}" required>
+            </td>
+            <td>
+                <input type="text" name="engine_number" value="{{ car[2] }}" pattern="[A-Za-z0-9]{1,50}" required>
+            </td>
+            <td>
+                <input type="text" name="color" value="{{ car[3] }}" pattern="[А-Яа-яA-Za-z\s]{1,30}" required>
+            </td>
+            <td>
+                <input type="text" name="brand" value="{{ car[4] }}" pattern="[А-Яа-яA-Za-z0-9\s]{1,50}" required>
+            </td>
+            <td>
+                <select name="owner_license_number" required>
+                    {% for owner in owners %}
+                    <option value="{{ owner[0] }}" {% if owner[0] == car[5] %}selected{% endif %}>
+                        {{ owner[1] }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </td>
+            <td>
+                <input type="text" name="country" value="{{ car[6] }}" pattern="[А-Яа-яA-Za-z\s]{1,30}" required>
+            </td>
+            <td>
+                <input type="number" name="performance" value="{{ car[7] }}" min="1" max="2000" required>
+            </td>
+            <td class="actions">
+                <button type="submit">Обновить</button>
+                <a href="{{ url_for('delete_car', tech_passport_number=car[0]) }}" 
+                   onclick="return confirm('Удалить автомобиль {{ car[1] }}?')" 
+                   class="btn-danger">Удалить</a>
+            </td>
+            </form>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>Автомобили не найдены.</p>
+{% endif %}
+{% endblock %}

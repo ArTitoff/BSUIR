@@ -1,0 +1,12 @@
+@startuml
+class Product {
+    get_name()
+    get_price()
+    get_guarantee()
+    print_info()
+        __name
+    __price
+    __guarantee
+    __init__()
+}
+@enduml

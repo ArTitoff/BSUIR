@@ -1,0 +1,92 @@
+1. Список всех автомобилей с их марками и цветами
+
+MATCH (car:node)-[:ЭТО]->(:class {name:'автомобиль'})
+MATCH (car)-[:МАРКА]->(brand:class)
+MATCH (car)-[:ЦВЕТ]->(color:class)
+RETURN car, brand, color
+
+
+
+2. Владельцы автомобилей с их годом рождения, адрес и номер удостоверения.
+
+MATCH (owner:node)-[:ЭТО]->(:class {name:'владелец'})
+OPTIONAL MATCH (owner)-[:ГОД_РОЖДЕНИЯ]->(birth_year:number)
+OPTIONAL MATCH (owner)-[:АДРЕС]->(street:node)
+OPTIONAL MATCH (owner)-[:НОМЕР_УДОСТОВЕРЕНИЯ]->(license:number)
+RETURN owner, birth_year, street, license
+
+
+
+3. Автомобили с номерами двигателей и номерными знаками
+
+MATCH (car:node)-[:ЭТО]->(:class {name:'автомобиль'})
+MATCH (car)-[:НОМЕР_ДВИГАТЕЛЯ]->(engine:number)
+MATCH (car)-[:НОМЕРНОЙ_ЗНАК]->(plate:string)
+RETURN car, engine, plate
+
+
+
+4. Осмотры автомобилей с результатами, датами и инспекторами 
+
+MATCH (insp:node)-[:ЭТО]->(:class {name:'осмотр'})
+MATCH (insp)-[:ОСМАТРИВАЕМАЯ_МАШИНА]->(car:node)
+MATCH (insp)-[:ОСМАТРИВАЕТ]->(inspector:node)
+MATCH (insp)-[:ДАТА]->(date:node)
+MATCH (insp)-[:РЕЗУЛЬТАТ]->(result:class)
+RETURN insp, car, inspector, date, result
+
+
+
+5. Инспекторы с их званиями и должностями
+
+MATCH (insp:node)-[:ЭТО]->(:class {name:'инспектор'})
+MATCH (insp)-[:ЭТО]->(rank:class)
+WHERE rank.name IN ['майор', 'капитан']
+MATCH (insp)-[:ЭТО]->(position:class)
+WHERE position.name IN ['заведующий', 'заместитель']
+RETURN insp, rank, position
+
+
+
+6. Автомобили, не прошедшие осмотр
+
+MATCH (insp:node)-[:ЭТО]->(:class {name:'осмотр'})
+MATCH (insp)-[:РЕЗУЛЬТАТ]->(result:class {name:'не_пройден'})
+MATCH (insp)-[:ОСМАТРИВАЕМАЯ_МАШИНА]->(car:node)
+RETURN insp, car, result
+
+
+
+7. Владельцы-мужчины и их автомобили
+
+MATCH (owner:node)-[:ЭТО]->(:class {name:'мужчина'})
+MATCH (car:node)-[:ВЛАДЕЛЕЦ]->(owner)
+RETURN owner, car
+
+
+
+8. Количество осмотров, проведенных каждым инспектором
+
+MATCH (inspector:node)-[:ЭТО]->(:class {name:'инспектор'})
+MATCH (insp:node)-[:ОСМАТРИВАЕТ]->(inspector)
+RETURN inspector.name AS Инспектор, COUNT(insp) AS Количество_осмотров
+
+
+
+9. Автомобили красного цвета
+
+MATCH (car:node)-[:ЦВЕТ]->(colour:class)
+WHERE colour.name in ['красный']
+RETURN car, colour
+
+
+
+10. Все осмотры Боба с детальной информацией
+
+MATCH (bob:node {name: 'Боб'})-[:ЭТО]->(inspector:class {name: 'инспектор'})
+MATCH (insp:node)-[:ОСМАТРИВАЕТ]->(bob)
+MATCH (insp)-[:ОСМАТРИВАЕМАЯ_МАШИНА]->(car:node)
+MATCH (car)-[:ВЛАДЕЛЕЦ]->(owner:node)
+MATCH (insp)-[:ДАТА]->(date:node)
+MATCH (insp)-[:РЕЗУЛЬТАТ]->(result:class)
+RETURN bob, car, owner, date, result, insp
