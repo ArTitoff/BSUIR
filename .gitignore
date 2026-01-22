@@ -1,0 +1,25 @@
+# Temporary and output folders
+impl/
+filtered_results/
+plots/
+downloads/
+archive/
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+myenv/
+venv/
+
+# Large files
+*.weights
+*.pt
+*.mp3
+*.wav
+
+# System
+.DS_Store
+.vscode/
+.idea/
