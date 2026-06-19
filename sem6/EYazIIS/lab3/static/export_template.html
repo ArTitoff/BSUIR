@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Синтаксическое дерево</title>
+    <style>
+        body { margin:0; padding:20px; font-family:Segoe UI,sans-serif; background:#f0f0f0; }
+        .container { max-width:1400px; margin:0 auto; }
+        .header { background:#4a6fa5; color:white; padding:20px; border-radius:8px; margin-bottom:20px; }
+        .sentence-text { font-size:18px; padding:15px; background:white; border-left:4px solid #4a6fa5; margin-bottom:20px; }
+        .tree-container { background:white; padding:20px; border-radius:8px; height:600px; position:relative; overflow:hidden; }
+        #treeCanvas { width:100%; height:100%; background:#fafafa; display:block; }
+        .word-group { cursor: grab; }
+        .word-group:active { cursor: grabbing; }
+        .word-group:hover rect { filter:brightness(0.95); }
+        .dependency-line { stroke:#666; stroke-width:2; fill:none; }
+        .dependency-label { font-size:12px; fill:#4a6fa5; font-weight:bold; pointer-events:none; }
+        .zoom-controls { position:absolute; bottom:30px; right:30px; display:flex; gap:5px; z-index:10; }
+        .zoom-controls button { width:40px; height:40px; border-radius:20px; background:white; border:1px solid #ddd; cursor:pointer; font-size:18px; }
+        .zoom-controls button:hover { background:#4a6fa5; color:white; }
+        .info-panel { position:fixed; bottom:20px; left:20px; background:white; padding:15px; border-radius:8px; display:none; box-shadow:0 2px 10px rgba(0,0,0,0.2); z-index:20; }
+        .info-panel.active { display:block; }
+        .info-close { position:absolute; top:5px; right:10px; cursor:pointer; font-size:18px; }
+        .info-close:hover { color:#4a6fa5; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header"><h1>🌳 Синтаксическое дерево</h1></div>
+        <div class="sentence-text" id="sentenceText"></div>
+        <div class="tree-container" id="treeContainer">
+            <svg id="treeCanvas"></svg>
+            <div class="zoom-controls">
+                <button onclick="zoom(1.2)">+</button>
+                <button onclick="zoom(0.8)">-</button>
+                <button onclick="resetView()">⟲</button>
+            </div>
+        </div>
+    </div>
+    <div class="info-panel" id="infoPanel">
+        <span class="info-close" onclick="closeInfo()">✖</span>
+        <h4>Информация</h4>
+        <p><strong>Слово:</strong> <span id="infoText"></span></p>
+        <p><strong>Лемма:</strong> <span id="infoLemma"></span></p>
+        <p><strong>Часть речи:</strong> <span id="infoPos"></span></p>
+        <p><strong>Член предложения:</strong> <span id="infoMember"></span></p>
+    </div>
+    <script>
+        const WORDS = %%WORDS%%;
+        const ARCS = %%ARCS%%;
+        const POSITIONS = %%POSITIONS%%;
+        
+        let words = WORDS;
+        let arcs = ARCS;
+        let positions = POSITIONS;
+        let transform = { x: 0, y: 0, scale: 1 };
+        
+        // Для панорамирования
+        let isPanning = false;
+        let panStart = { x: 0, y: 0 };
+        
+        // Для перемещения узлов
+        let draggingIndex = null;
+        let dragStart = { x: 0, y: 0 };
+        let dragStartPos = { x: 0, y: 0 };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            displayTree();
+            setupControls();
+        });
+
+        function displayTree() {
+            const svg = document.getElementById('treeCanvas');
+            const container = document.getElementById('treeContainer');
+            svg.setAttribute('width', container.clientWidth);
+            svg.setAttribute('height', container.clientHeight);
+            svg.innerHTML = '';
+            
+            document.getElementById('sentenceText').textContent = words.map(w => w.text).join(' ');
+            
+            const mainGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+            mainGroup.setAttribute('transform', `translate(${transform.x},${transform.y}) scale(${transform.scale})`);
+            
+            // Маркер стрелки
+            const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+            const marker = document.createElementNS('http://www.w3.org/2000/svg', 'marker');
+            marker.setAttribute('id', 'arrow');
+            marker.setAttribute('markerWidth', '10');
+            marker.setAttribute('markerHeight', '10');
+            marker.setAttribute('refX', '9');
+            marker.setAttribute('refY', '5');
+            marker.setAttribute('orient', 'auto');
+            const arrow = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+            arrow.setAttribute('points', '0 0, 10 5, 0 10');
+            arrow.setAttribute('fill', '#666');
+            marker.appendChild(arrow);
+            defs.appendChild(marker);
+            mainGroup.appendChild(defs);
+
+            // Рисуем связи
+            arcs.forEach(arc => {
+                const start = positions[arc.start];
+                const end = positions[arc.end];
+                if (!start || !end) return;
+                
+                const x1 = start.x, y1 = start.y - 35;
+                const x2 = end.x, y2 = end.y - 35;
+                const midX = (x1 + x2) / 2, midY = Math.min(y1, y2) - 40;
+                
+                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                path.setAttribute('d', `M ${x1} ${y1} Q ${midX} ${midY}, ${x2} ${y2}`);
+                path.setAttribute('class', 'dependency-line');
+                path.setAttribute('stroke', '#666');
+                path.setAttribute('fill', 'none');
+                path.setAttribute('marker-end', 'url(#arrow)');
+                mainGroup.appendChild(path);
+                
+                const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                label.setAttribute('x', midX);
+                label.setAttribute('y', midY - 10);
+                label.setAttribute('text-anchor', 'middle');
+                label.setAttribute('class', 'dependency-label');
+                label.textContent = arc.label;
+                mainGroup.appendChild(label);
+            });
+
+            // Рисуем слова
+            words.forEach((word, i) => {
+                const pos = positions[i];
+                if (!pos) return;
+                
+                const lemma = word.data.find(d => d[0] === 'lemma')?.[1] || '';
+                const member = word.data.find(d => d[0] === 'member')?.[1] || '-';
+                
+                const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                g.setAttribute('class', 'word-group');
+                g.setAttribute('data-index', i);
+                g.setAttribute('transform', `translate(${pos.x - 50}, ${pos.y - 35})`);
+                
+                const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                rect.setAttribute('width', '100');
+                rect.setAttribute('height', '70');
+                rect.setAttribute('rx', '8');
+                rect.setAttribute('fill', '#4a6fa5');
+                rect.setAttribute('stroke', 'white');
+                rect.setAttribute('stroke-width', '2');
+                g.appendChild(rect);
+                
+                const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                text.setAttribute('x', '50');
+                text.setAttribute('y', '25');
+                text.setAttribute('text-anchor', 'middle');
+                text.setAttribute('fill', 'white');
+                text.setAttribute('font-weight', 'bold');
+                text.textContent = word.text;
+                g.appendChild(text);
+                
+                const lemmaText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                lemmaText.setAttribute('x', '50');
+                lemmaText.setAttribute('y', '40');
+                lemmaText.setAttribute('text-anchor', 'middle');
+                lemmaText.setAttribute('fill', '#e8f0fe');
+                lemmaText.setAttribute('font-size', '10');
+                lemmaText.textContent = lemma;
+                g.appendChild(lemmaText);
+                
+                const posText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                posText.setAttribute('x', '50');
+                posText.setAttribute('y', '55');
+                posText.setAttribute('text-anchor', 'middle');
+                posText.setAttribute('fill', '#ddd');
+                posText.setAttribute('font-size', '9');
+                posText.textContent = word.tag;
+                g.appendChild(posText);
+                
+                // Показ информации при клике
+                g.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    document.getElementById('infoText').textContent = word.text;
+                    document.getElementById('infoLemma').textContent = lemma;
+                    document.getElementById('infoPos').textContent = word.tag;
+                    document.getElementById('infoMember').textContent = member;
+                    document.getElementById('infoPanel').classList.add('active');
+                });
+                
+                // Перемещение узла (всегда активно)
+                g.addEventListener('mousedown', (e) => {
+                    e.stopPropagation();
+                    draggingIndex = i;
+                    dragStart = { x: e.clientX, y: e.clientY };
+                    dragStartPos = { ...positions[i] };
+                    g.style.cursor = 'grabbing';
+                });
+                
+                mainGroup.appendChild(g);
+            });
+            
+            svg.appendChild(mainGroup);
+        }
+
+        // Обработчики для перемещения узлов и панорамирования
+        function setupControls() {
+            const svg = document.getElementById('treeCanvas');
+            const container = document.getElementById('treeContainer');
+            
+            // Панорамирование с Ctrl
+            container.addEventListener('mousedown', (e) => {
+                if (e.ctrlKey) {
+                    e.preventDefault();
+                    isPanning = true;
+                    panStart = { x: e.clientX - transform.x, y: e.clientY - transform.y };
+                    container.style.cursor = 'grabbing';
+                }
+            });
+            
+            // Перемещение мыши
+            document.addEventListener('mousemove', (e) => {
+                if (draggingIndex !== null) {
+                    // Перемещаем узел
+                    const dx = (e.clientX - dragStart.x) / transform.scale;
+                    const dy = (e.clientY - dragStart.y) / transform.scale;
+                    
+                    positions[draggingIndex] = {
+                        x: dragStartPos.x + dx,
+                        y: dragStartPos.y + dy
+                    };
+                    
+                    displayTree();
+                } else if (isPanning) {
+                    // Панорамирование
+                    transform.x = e.clientX - panStart.x;
+                    transform.y = e.clientY - panStart.y;
+                    displayTree();
+                }
+            });
+            
+            // Отпускание мыши
+            document.addEventListener('mouseup', () => {
+                draggingIndex = null;
+                isPanning = false;
+                container.style.cursor = 'default';
+            });
+            
+            container.addEventListener('mouseleave', () => {
+                draggingIndex = null;
+                isPanning = false;
+                container.style.cursor = 'default';
+            });
+            
+            // Масштабирование колесиком
+            container.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                const delta = e.deltaY > 0 ? 0.9 : 1.1;
+                transform.scale *= delta;
+                transform.scale = Math.min(Math.max(0.5, transform.scale), 3);
+                displayTree();
+            });
+        }
+
+        function zoom(factor) {
+            transform.scale *= factor;
+            transform.scale = Math.min(Math.max(0.5, transform.scale), 3);
+            displayTree();
+        }
+
+        function resetView() {
+            transform = { x: 0, y: 0, scale: 1 };
+            displayTree();
+        }
+
+        function closeInfo() {
+            document.getElementById('infoPanel').classList.remove('active');
+        }
+    </script>
+</body>
+</html>

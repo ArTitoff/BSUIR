@@ -1,0 +1,66 @@
+-- 1. Таблица документов
+CREATE TABLE documents (
+    id SERIAL PRIMARY KEY,
+    filename TEXT NOT NULL UNIQUE,
+    title TEXT,
+    author TEXT,
+    year INTEGER,
+    genre TEXT,
+    subject_area TEXT
+);
+
+
+-- 2. Таблица предложений
+CREATE TABLE sentences (
+    id SERIAL PRIMARY KEY,
+    doc_id INTEGER NOT NULL REFERENCES documents(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    sentence_text TEXT NOT NULL
+);
+
+
+CREATE INDEX idx_sentences_doc_id ON sentences(doc_id);
+
+
+-- 3. Таблица токенов
+CREATE TABLE tokens (
+    id SERIAL PRIMARY KEY,
+    sentence_id INTEGER NOT NULL REFERENCES sentences(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    token_text TEXT NOT NULL,
+    lemma TEXT NOT NULL,
+    pos_code TEXT NOT NULL,
+    pos_ru TEXT NOT NULL,
+    dep_code TEXT,
+    member TEXT,
+	meaning TEXT
+);
+
+ALTER TABLE tokens ADD COLUMN head_id INTEGER REFERENCES tokens(id);
+
+CREATE INDEX idx_tokens_lemma ON tokens(lemma);
+CREATE INDEX idx_tokens_token_text ON tokens(token_text);
+CREATE INDEX idx_tokens_pos_code ON tokens(pos_code);
+CREATE INDEX idx_tokens_member ON tokens(member);
+CREATE INDEX idx_tokens_sentence_id ON tokens(sentence_id);
+
+
+-- 4. Представление для конкорданса 
+DROP VIEW IF EXISTS concordance;
+
+CREATE VIEW concordance AS
+SELECT 
+    t.id as token_id,
+    t.token_text,
+    t.lemma,
+    t.pos_ru,
+    t.member,
+    s.sentence_text,
+    s.id as sentence_id,  -- sentence_id ПОСЛЕ sentence_text
+    d.filename,
+    d.title,
+    d.author,
+    d.year,
+    d.genre,
+    d.subject_area
+FROM tokens t
+JOIN sentences s ON t.sentence_id = s.id
+JOIN documents d ON s.doc_id = d.id;

@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Семантический анализ</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #f0f0f0;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background-color: #28a745;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        
+        .header a {
+            color: white;
+            text-decoration: none;
+            background-color: #6c757d;
+            padding: 10px 20px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        
+        .header a:hover {
+            background-color: #5a6268;
+        }
+        
+        .search-section {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .search-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .search-row input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        
+        .search-row input:focus {
+            outline: none;
+            border-color: #28a745;
+            box-shadow: 0 0 0 2px rgba(40,167,69,0.2);
+        }
+        
+        .filter-section {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .filter-section select {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            min-width: 150px;
+        }
+        
+        button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+        
+        button:hover {
+            background-color: #218838;
+        }
+        
+        button.secondary {
+            background-color: #6c757d;
+        }
+        
+        button.secondary:hover {
+            background-color: #5a6268;
+        }
+        
+        .stats-badge {
+            background-color: #17a2b8;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 4px;
+            font-size: 14px;
+            margin-left: auto;
+        }
+        
+        .results-section {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .table-container {
+            overflow-x: auto;
+            max-height: 600px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+        
+        th {
+            background-color: #28a745;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            font-weight: 500;
+        }
+        
+        td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            vertical-align: top;
+        }
+        
+        /* Ширина колонок */
+        th:nth-child(1), td:nth-child(1) { width: 150px; }
+        th:nth-child(2), td:nth-child(2) { width: 150px; }
+        th:nth-child(3), td:nth-child(3) { width: 550px; }
+        th:nth-child(4), td:nth-child(4) { width: 450px; }
+        
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .context-cell {
+            font-style: italic;
+            color: #333;
+            white-space: normal;
+            word-wrap: break-word;
+        }
+        
+        .editable {
+            cursor: pointer;
+            position: relative;
+            white-space: normal;
+            word-wrap: break-word;
+        }
+        
+        .editable:hover {
+            background-color: #e8f5e9;
+        }
+        
+        .editable:hover::after {
+            content: "✏️";
+            position: absolute;
+            right: 5px;
+            color: #28a745;
+            font-size: 12px;
+        }
+        
+        .editing-input {
+            width: 100%;
+            padding: 5px;
+            border: 2px solid #28a745;
+            border-radius: 4px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        
+        .count-display {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e8f5e9;
+            border-radius: 4px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #28a745;
+            text-align: center;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            justify-content: flex-end;
+        }
+        
+        .loading {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0,0,0,0.8);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            z-index: 1000;
+        }
+        
+        .help-section {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            border-left: 4px solid #28a745;
+        }
+        
+        .help-section h3 {
+            color: #28a745;
+            margin-bottom: 10px;
+        }
+        
+        .help-section p {
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+        
+        .help-section ul {
+            margin-left: 20px;
+            margin-bottom: 10px;
+        }
+        
+        .help-section li {
+            margin-bottom: 5px;
+        }
+        
+        .info-note {
+            background-color: #e7f3ff;
+            border-left: 4px solid #2196F3;
+            padding: 12px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+        
+        .info-note strong {
+            color: #2196F3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧠 Семантический анализ</h1>
+            <div>
+                <button onclick="window.location.href='/'" class="secondary">📚 На главную</button>
+            </div>
+        </div>
+        
+        <div class="search-section">
+            <div class="search-row">
+                <input type="text" id="lemmaSearch" placeholder="Фильтр по лемме (введите буквы)..." onkeyup="filterByLemma()">
+                <button onclick="loadAllSemanticData()">🔄 Показать все</button>
+            </div>
+            <div class="filter-section">
+                <span>Фильтр: показываются слова, у которых есть семантическое значение (из WordNet)</span>
+                <span id="totalCount" class="stats-badge">Всего слов: 0</span>
+            </div>
+        </div>
+        
+        <div class="results-section">
+            <div class="table-container">
+                <table id="semanticTable">
+                    <thead>
+                        <tr>
+                            <th>Лемма</th>
+                            <th>Слово</th>
+                            <th>Семантическое значение</th>
+                            <th>Контекст (предложение)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <tr>
+                            <td colspan="4" style="text-align: center; padding: 50px;">
+                                Загрузка данных...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="count-display" id="countDisplay">
+                Всего слов с семантическим значением: 0
+            </div>
+            
+            <div class="action-buttons">
+                <button onclick="exportToTxt()">📄 Сохранить как TXT</button>
+                <button onclick="exportToJson()">💾 Сохранить как JSON</button>
+            </div>
+        </div>
+        
+
+    
+    <div id="loading" class="loading">Загрузка...</div>
+    
+    <script>
+        let semanticData = [];
+        let filteredData = [];
+        
+        // Загрузка всех данных с семантическим значением
+        function loadAllSemanticData() {
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('tableBody').innerHTML = '<tr><td colspan="4" style="text-align: center;">Загрузка...</td></tr>';
+            
+            fetch('/api/semantic_data')
+                .then(res => res.json())
+                .then(data => {
+                    if (data.error) {
+                        alert('Ошибка: ' + data.error);
+                        document.getElementById('tableBody').innerHTML = '<tr><td colspan="4" style="text-align: center;">Ошибка загрузки данных</td></tr>';
+                    } else {
+                        semanticData = data.data;
+                        filteredData = [...semanticData];
+                        displayResults(filteredData);
+                        document.getElementById('totalCount').textContent = `Всего слов: ${semanticData.length}`;
+                        document.getElementById('countDisplay').textContent = `Всего слов с семантическим значением: ${semanticData.length}`;
+                    }
+                    document.getElementById('loading').style.display = 'none';
+                })
+                .catch(err => {
+                    console.error('Ошибка:', err);
+                    document.getElementById('tableBody').innerHTML = '<tr><td colspan="4" style="text-align: center;">Ошибка загрузки данных</td></tr>';
+                    document.getElementById('loading').style.display = 'none';
+                });
+        }
+        
+        // Фильтрация по лемме (поиск по подстроке)
+        function filterByLemma() {
+            const searchText = document.getElementById('lemmaSearch').value.toLowerCase().trim();
+            
+            if (searchText === '') {
+                filteredData = [...semanticData];
+            } else {
+                filteredData = semanticData.filter(item => 
+                    item.lemma && item.lemma.toLowerCase().includes(searchText)
+                );
+            }
+            
+            displayResults(filteredData);
+            document.getElementById('totalCount').textContent = `Всего слов: ${filteredData.length}`;
+        }
+        
+        // Отображение результатов
+        function displayResults(data) {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+            
+            if (data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 50px;">Нет слов с семантическим значением, соответствующих фильтру</td></tr>';
+                return;
+            }
+            
+            data.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.dataset.tokenId = row.token_id;
+                
+                // Лемма
+                const td1 = document.createElement('td');
+                td1.textContent = row.lemma || '—';
+                
+                // Слово
+                const td2 = document.createElement('td');
+                td2.textContent = row.token_text || '—';
+                
+                // Семантическое значение (редактируемое)
+                const td3 = document.createElement('td');
+                td3.className = 'editable';
+                td3.textContent = row.meaning || '—';
+                td3.onclick = () => editMeaning(td3, row.token_id, row.meaning);
+                
+                // Контекст
+                const td4 = document.createElement('td');
+                td4.className = 'context-cell';
+                td4.textContent = row.sentence_text || '—';
+                
+                tr.appendChild(td1);
+                tr.appendChild(td2);
+                tr.appendChild(td3);
+                tr.appendChild(td4);
+                tbody.appendChild(tr);
+            });
+        }
+        
+        // Редактирование семантического значения
+        function editMeaning(td, tokenId, oldValue) {
+            const input = document.createElement('input');
+            input.className = 'editing-input';
+            input.value = oldValue === '—' ? '' : oldValue;
+            
+            const originalText = td.textContent;
+            td.innerHTML = '';
+            td.appendChild(input);
+            input.focus();
+            
+            const saveEdit = () => {
+                const newValue = input.value.trim();
+                
+                if (newValue !== (oldValue === '—' ? '' : oldValue)) {
+                    fetch('/api/update_token_meaning', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({
+                            token_id: tokenId,
+                            meaning: newValue || null
+                        })
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            td.textContent = newValue || '—';
+                            // Обновляем данные в массивах
+                            updateSemanticData(tokenId, 'meaning', newValue);
+                        } else {
+                            td.textContent = originalText;
+                            alert('Ошибка при сохранении');
+                        }
+                    })
+                    .catch(() => {
+                        td.textContent = originalText;
+                        alert('Ошибка сети');
+                    });
+                } else {
+                    td.textContent = originalText;
+                }
+            };
+            
+            input.onblur = saveEdit;
+            input.onkeypress = (e) => {
+                if (e.key === 'Enter') saveEdit();
+                if (e.key === 'Escape') td.textContent = originalText;
+            };
+        }
+        
+        // Обновление данных в массивах после редактирования
+        function updateSemanticData(tokenId, field, value) {
+            semanticData = semanticData.map(item => {
+                if (item.token_id === tokenId) {
+                    return {...item, [field]: value};
+                }
+                return item;
+            });
+            filteredData = filteredData.map(item => {
+                if (item.token_id === tokenId) {
+                    return {...item, [field]: value};
+                }
+                return item;
+            });
+        }
+        
+        // Экспорт в TXT
+        function exportToTxt() {
+            if (filteredData.length === 0) {
+                alert('Нет данных для экспорта');
+                return;
+            }
+            
+            let content = "=== СЕМАНТИЧЕСКИЙ АНАЛИЗ ===\n";
+            content += `Дата экспорта: ${new Date().toLocaleString()}\n`;
+            content += `Всего слов: ${filteredData.length}\n`;
+            content += "=".repeat(60) + "\n\n";
+            
+            filteredData.forEach((item, idx) => {
+                content += `${idx + 1}. Слово: ${item.token_text || '—'}\n`;
+                content += `   Лемма: ${item.lemma || '—'}\n`;
+                content += `   Значение: ${item.meaning || '—'}\n`;
+                content += `   Контекст: ${item.sentence_text || '—'}\n`;
+                content += "-".repeat(40) + "\n";
+            });
+            
+            downloadFile(content, `semantic_analysis_${new Date().toISOString().slice(0,19)}.txt`, 'text/plain');
+        }
+        
+        // Экспорт в JSON
+        function exportToJson() {
+            if (filteredData.length === 0) {
+                alert('Нет данных для экспорта');
+                return;
+            }
+            
+            const exportData = {
+                export_date: new Date().toISOString(),
+                total_words: filteredData.length,
+                data: filteredData.map(item => ({
+                    token_id: item.token_id,
+                    token_text: item.token_text,
+                    lemma: item.lemma,
+                    meaning: item.meaning,
+                    sentence_text: item.sentence_text
+                }))
+            };
+            
+            const jsonStr = JSON.stringify(exportData, null, 2);
+            downloadFile(jsonStr, `semantic_analysis_${new Date().toISOString().slice(0,19)}.json`, 'application/json');
+        }
+        
+        // Скачивание файла
+        function downloadFile(content, filename, mimeType) {
+            const blob = new Blob([content], {type: mimeType});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+        
+        // Показать помощь
+        function showHelp() {
+            document.getElementById('helpModal').style.display = 'flex';
+        }
+        
+        function closeHelp() {
+            document.getElementById('helpModal').style.display = 'none';
+        }
+        
+        // Загрузка при открытии страницы
+        loadAllSemanticData();
+        
+        // Фильтрация по Enter
+        document.getElementById('lemmaSearch').onkeypress = function(e) {
+            if (e.key === 'Enter') filterByLemma();
+        };
+    </script>
+</body>
+</html>

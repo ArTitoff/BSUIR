@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Корпусный менеджер</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #f0f0f0;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background-color: #4a6fa5;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        
+        .header a {
+            color: white;
+            text-decoration: none;
+            background-color: #6c757d;
+            padding: 10px 20px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        
+        .header a:hover {
+            background-color: #5a6268;
+        }
+        
+        .upload-section {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .upload-section h3 {
+            margin-bottom: 15px;
+            color: #4a6fa5;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #4a6fa5;
+            box-shadow: 0 0 0 2px rgba(74,111,165,0.2);
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        button {
+            background-color: #4a6fa5;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+        
+        button:hover {
+            background-color: #3a5a8c;
+        }
+        
+        button.secondary {
+            background-color: #6c757d;
+        }
+        
+        button.secondary:hover {
+            background-color: #5a6268;
+        }
+        
+        button.danger {
+            background-color: #dc3545;
+        }
+        
+        button.danger:hover {
+            background-color: #c82333;
+        }
+        
+        .search-section {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .search-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .search-row input {
+            flex: 2;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        
+        .search-row input:focus {
+            outline: none;
+            border-color: #4a6fa5;
+            box-shadow: 0 0 0 2px rgba(74,111,165,0.2);
+        }
+        
+        .filter-section {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .filter-section select {
+            flex: 1;
+            min-width: 180px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .stats-badge {
+            background-color: #17a2b8;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 4px;
+            font-size: 14px;
+            margin-left: auto;
+        }
+        
+        .results-section {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .table-container {
+            overflow-x: auto;
+            max-height: 500px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+        
+        th {
+            background-color: #4a6fa5;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            font-weight: 500;
+        }
+        
+        td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            vertical-align: top;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        /* Увеличиваем ширину колонок и добавляем колонку для действий */
+        th:nth-child(1), td:nth-child(1) { width: 140px; }
+        th:nth-child(2), td:nth-child(2) { width: 140px; }
+        th:nth-child(3), td:nth-child(3) { width: 160px; }
+        th:nth-child(4), td:nth-child(4) { width: 140px; }
+        th:nth-child(5), td:nth-child(5) { width: 500px; }
+        th:nth-child(6), td:nth-child(6) { width: 80px; text-align: center; }
+        
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .context-cell {
+            max-width: 500px;
+        }
+        
+        .context-text {
+            font-style: italic;
+            color: #333;
+            white-space: normal;
+            word-wrap: break-word;
+        }
+        
+        .source-info {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+            white-space: normal;
+        }
+        
+        .editable {
+            cursor: pointer;
+            position: relative;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .editable:hover {
+            background-color: #e8f0fe;
+        }
+        
+        .editable:hover::after {
+            content: "✏️";
+            position: absolute;
+            right: 5px;
+            color: #4a6fa5;
+            font-size: 12px;
+        }
+        
+        .editing-input {
+            width: 100%;
+            padding: 5px;
+            border: 2px solid #4a6fa5;
+            border-radius: 4px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        
+        .delete-btn {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 8px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background-color 0.2s;
+        }
+        
+        .delete-btn:hover {
+            background-color: #c82333;
+        }
+        
+        .count-display {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e8f4f8;
+            border-radius: 4px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #4a6fa5;
+            text-align: center;
+        }
+        
+        .documents-section {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .documents-section h4 {
+            margin-bottom: 15px;
+            color: #4a6fa5;
+        }
+        
+        .documents-list {
+            margin-top: 15px;
+        }
+        
+        .doc-header {
+            display: grid;
+            grid-template-columns: 200px 340px 260px 120px 200px 100px;
+            gap: 10px;
+            padding: 10px;
+            background-color: #f0f0f0;
+            font-weight: bold;
+            border-radius: 4px;
+            margin-bottom: 5px;
+        }
+        
+        .doc-item {
+            display: grid;
+            grid-template-columns: 200px 340px 260px 120px 200px 100px;
+            gap: 10px;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            align-items: center;
+        }
+        
+        .doc-item:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .doc-field {
+            padding: 5px;
+            cursor: pointer;
+            border-radius: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .doc-field:hover {
+            background-color: #e8f0fe;
+        }
+        
+        .doc-field input {
+            width: 100%;
+            padding: 5px;
+            border: 2px solid #4a6fa5;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .doc-item button {
+            padding: 5px 10px;
+            font-size: 12px;
+            width: 60px;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+            justify-content: flex-start;
+        }
+        
+        .loading {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0,0,0,0.8);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            z-index: 1000;
+        }
+        
+        .hint {
+            color: #666;
+            font-size: 12px;
+            margin-top: 5px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📚 Корпусный менеджер (Услуги)</h1>
+            <div>
+                <button onclick="exportResults()" class="secondary" style="margin-right: 10px;">💾 Экспорт JSON</button>
+                <a href="/help" target="_blank">📖 Помощь</a>
+            </div>
+        </div>
+        
+        <div class="upload-section">
+            <h3>📁 Загрузка документа</h3>
+            <form id="uploadForm" enctype="multipart/form-data">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Файл (PDF, DOCX, TXT, RTF, DOC)</label>
+                        <input type="file" name="file" id="fileInput" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Название (необязательно)</label>
+                        <input type="text" name="title" id="titleInput" placeholder="Введите название">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Автор (необязательно)</label>
+                        <input type="text" name="author" id="authorInput" placeholder="Введите автора">
+                    </div>
+                    <div class="form-group">
+                        <label>Год (необязательно)</label>
+                        <input type="number" name="year" id="yearInput" placeholder="Год издания">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Жанр (необязательно)</label>
+                        <input type="text" name="genre" id="genreInput" placeholder="Введите жанр">
+                    </div>
+                    <div class="form-group">
+                        <label>Предметная область</label>
+                        <input type="text" name="subject_area" id="subjectInput" value="Услуги">
+                    </div>
+                </div>
+                <button type="submit">📤 Загрузить и анализировать</button>
+            </form>
+        </div>
+        
+        <div class="search-section">
+            <div class="search-row">
+                <input type="text" id="searchInput" placeholder="Введите слово для поиска (можно оставить пустым)...">
+                <button onclick="search()">🔍 Найти</button>
+                <button onclick="clearSearch()" class="secondary">✖ Сбросить</button>
+            </div>
+            <div class="hint">Результаты появятся только после нажатия "Найти"</div>
+            
+            <div class="filter-section">
+                <select id="posFilter">
+                    <option value="">Все части речи</option>
+                    {% for pos in pos_options %}
+                    <option value="{{ pos }}">{{ pos }}</option>
+                    {% endfor %}
+                </select>
+                
+                <select id="memberFilter">
+                    <option value="">Все члены предложения</option>
+                    <option value="подлежащее">Подлежащее</option>
+                    <option value="сказуемое">Сказуемое</option>
+                    <option value="дополнение">Дополнение</option>
+                    <option value="определение">Определение</option>
+                    <option value="обстоятельство">Обстоятельство</option>
+                    <option value="-">Не определено</option>
+                </select>
+                
+                <button onclick="search()">Применить фильтры</button>
+                <span id="totalCount" class="stats-badge">Найдено: 0</span>
+            </div>
+        </div>
+        
+        <div class="results-section">
+            <div class="table-container">
+                <table id="resultsTable">
+                    <thead>
+                        <tr>
+                            <th>Слово</th>
+                            <th>Лемма</th>
+                            <th>Часть речи</th>
+                            <th>Роль</th>
+                            <th>Контекст</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <tr>
+                            <td colspan="6" style="text-align: center; padding: 50px;">
+                                Нажмите "Найти" для поиска
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div id="countDisplay" class="count-display">
+                Всего вхождений: 0
+            </div>
+        </div>
+        
+        <div class="documents-section">
+            <h4>📋 Загруженные документы</h4>
+            <div class="documents-list" id="documentsList">
+                <div class="doc-header">
+                    <span>Файл</span>
+                    <span>Название</span>
+                    <span>Автор</span>
+                    <span>Год</span>
+                    <span>Жанр</span>
+                    <span>Действия</span>
+                </div>
+                <div id="docsContainer"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="loading" class="loading">Загрузка...</div>
+    
+    <script>
+        let currentResults = [];
+        let editingCell = null;
+        
+        // Загрузка списка документов
+        function loadDocuments() {
+            fetch('/api/documents')
+                .then(res => res.json())
+                .then(data => {
+                    const container = document.getElementById('docsContainer');
+                    container.innerHTML = '';
+                    
+                    data.documents.forEach(doc => {
+                        const div = document.createElement('div');
+                        div.className = 'doc-item';
+                        div.innerHTML = `
+                            <span class="doc-field" onclick="editDocField(${doc.id}, 'filename', this)">${doc.filename}</span>
+                            <span class="doc-field" onclick="editDocField(${doc.id}, 'title', this)">${doc.title || '—'}</span>
+                            <span class="doc-field" onclick="editDocField(${doc.id}, 'author', this)">${doc.author || '—'}</span>
+                            <span class="doc-field" onclick="editDocField(${doc.id}, 'year', this)">${doc.year || '—'}</span>
+                            <span class="doc-field" onclick="editDocField(${doc.id}, 'genre', this)">${doc.genre || '—'}</span>
+                            <div class="action-buttons">
+                                <button onclick="deleteDocument(${doc.id})" class="danger" style="padding: 3px 8px;">🗑</button>
+                            </div>
+                        `;
+                        container.appendChild(div);
+                    });
+                });
+        }
+        
+        // Редактирование поля документа
+        function editDocField(docId, field, element) {
+            const oldValue = element.textContent === '—' ? '' : element.textContent;
+            const input = document.createElement('input');
+            input.value = oldValue;
+            input.style.width = '100%';
+            
+            element.innerHTML = '';
+            element.appendChild(input);
+            input.focus();
+            
+            input.onblur = () => saveDocField(docId, field, input.value, element);
+            input.onkeypress = (e) => {
+                if (e.key === 'Enter') saveDocField(docId, field, input.value, element);
+            };
+        }
+        
+        function saveDocField(docId, field, newValue, element) {
+            const updates = {};
+            updates[field] = newValue;
+            
+            fetch('/api/update_document', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({doc_id: docId, ...updates})
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    element.textContent = newValue || '—';
+                } else {
+                    element.textContent = element.textContent;
+                }
+            })
+            .catch(() => {
+                element.textContent = element.textContent;
+            });
+        }
+        
+        // Поиск
+        function search() {
+            const lemma = document.getElementById('searchInput').value;
+            const pos = document.getElementById('posFilter').value;
+            const member = document.getElementById('memberFilter').value;
+            
+            document.getElementById('loading').style.display = 'block';
+            
+            fetch('/api/search', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    lemma: lemma,
+                    pos: pos || null,
+                    member: member || null
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    currentResults = data.results;
+                    displayResults(data.results);
+                    document.getElementById('totalCount').textContent = `Найдено: ${data.results.length}`;
+                    
+                    if (data.lemma) {
+                        document.getElementById('countDisplay').textContent = 
+                            `Всего вхождений слова "${data.lemma}": ${data.count}`;
+                    } else {
+                        document.getElementById('countDisplay').textContent = 
+                            `Всего вхождений: ${data.results.length}`;
+                    }
+                }
+                document.getElementById('loading').style.display = 'none';
+            });
+        }
+        
+        // Очистка поиска
+        function clearSearch() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('posFilter').value = '';
+            document.getElementById('memberFilter').value = '';
+            document.getElementById('tableBody').innerHTML = `
+                <tr>
+                    <td colspan="6" style="text-align: center; padding: 50px;">
+                        Нажмите "Найти" для поиска
+                    </td>
+                </tr>
+            `;
+            document.getElementById('totalCount').textContent = 'Найдено: 0';
+            document.getElementById('countDisplay').textContent = 'Всего вхождений: 0';
+            currentResults = [];
+        }
+        
+        // Отображение результатов (с кнопкой удаления)
+        function displayResults(results) {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+            
+            results.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.dataset.tokenId = row.token_id;
+                
+                // Слово
+                const td1 = document.createElement('td');
+                td1.className = 'editable';
+                td1.textContent = row.token_text || '';
+                td1.onclick = () => editCell(td1, 'token_text', row.token_id);
+                
+                // Лемма
+                const td2 = document.createElement('td');
+                td2.className = 'editable';
+                td2.textContent = row.lemma || '';
+                td2.onclick = () => editCell(td2, 'lemma', row.token_id);
+                
+                // Часть речи
+                const td3 = document.createElement('td');
+                td3.className = 'editable';
+                td3.textContent = row.pos_ru || '';
+                td3.onclick = () => editCell(td3, 'pos_ru', row.token_id);
+                
+                // Роль
+                const td4 = document.createElement('td');
+                td4.className = 'editable';
+                td4.textContent = row.member || '';
+                td4.onclick = () => editCell(td4, 'member', row.token_id);
+                
+                // Контекст
+                const td5 = document.createElement('td');
+                td5.className = 'context-cell';
+                td5.innerHTML = `
+                    <div class="context-text">${row.sentence_text || ''}</div>
+                    <div class="source-info">
+                        📄 ${row.filename || 'неизвестно'} | 
+                        ${row.author || 'неизвестен'} | 
+                        ${row.year || 'без года'} | 
+                        ${row.genre || 'без жанра'}
+                    </div>
+                `;
+                
+                // Кнопка удаления (НОВАЯ КОЛОНКА)
+                const td6 = document.createElement('td');
+                td6.style.textAlign = 'center';
+                const deleteBtn = document.createElement('button');
+                deleteBtn.className = 'delete-btn';
+                deleteBtn.innerHTML = '🗑';
+                deleteBtn.title = 'Удалить слово';
+                deleteBtn.onclick = (e) => {
+                    e.stopPropagation(); // Чтобы не сработало редактирование
+                    deleteWord(row.token_id);
+                };
+                td6.appendChild(deleteBtn);
+                
+                tr.appendChild(td1);
+                tr.appendChild(td2);
+                tr.appendChild(td3);
+                tr.appendChild(td4);
+                tr.appendChild(td5);
+                tr.appendChild(td6);
+                tbody.appendChild(tr);
+            });
+            
+            if (results.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 50px;">Ничего не найдено</td></tr>';
+            }
+        }
+        
+        // Функция удаления слова
+        function deleteWord(tokenId) {
+            if (!confirm('Вы уверены, что хотите удалить это слово?')) {
+                return;
+            }
+            
+            document.getElementById('loading').style.display = 'block';
+            
+            fetch('/api/delete_token', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({token_id: tokenId})
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    // Удаляем строку из таблицы
+                    const rows = document.querySelectorAll('#tableBody tr');
+                    for (let row of rows) {
+                        if (row.dataset.tokenId == tokenId) {
+                            row.remove();
+                            break;
+                        }
+                    }
+                    
+                    // Обновляем currentResults
+                    currentResults = currentResults.filter(r => r.token_id !== tokenId);
+                    
+                    // Обновляем счетчики
+                    document.getElementById('totalCount').textContent = `Найдено: ${currentResults.length}`;
+                    document.getElementById('countDisplay').textContent = 
+                        `Всего вхождений: ${currentResults.length}`;
+                    
+                    // Если результатов нет, показываем сообщение
+                    if (currentResults.length === 0) {
+                        document.getElementById('tableBody').innerHTML = 
+                            '<tr><td colspan="6" style="text-align: center; padding: 50px;">Ничего не найдено</td></tr>';
+                    }
+                    
+                    alert('Слово успешно удалено');
+                } else {
+                    alert('Ошибка при удалении: ' + (data.error || 'Неизвестная ошибка'));
+                }
+                document.getElementById('loading').style.display = 'none';
+            })
+            .catch(err => {
+                alert('Ошибка при удалении: ' + err.message);
+                document.getElementById('loading').style.display = 'none';
+            });
+        }
+        
+        // Редактирование ячейки
+        function editCell(td, field, tokenId) {
+            if (editingCell) return;
+            
+            const oldValue = td.textContent;
+            const originalWidth = td.offsetWidth;
+            
+            const input = document.createElement('input');
+            input.className = 'editing-input';
+            input.value = oldValue;
+            input.style.width = originalWidth + 'px';
+            
+            td.innerHTML = '';
+            td.appendChild(input);
+            input.focus();
+            
+            editingCell = {td, field, tokenId, oldValue, originalWidth};
+            
+            input.onblur = () => saveEdit(input.value);
+            input.onkeypress = (e) => {
+                if (e.key === 'Enter') saveEdit(input.value);
+                if (e.key === 'Escape') cancelEdit();
+            };
+        }
+        
+        function saveEdit(newValue) {
+            if (!editingCell) return;
+            
+            const {td, field, tokenId, oldValue, originalWidth} = editingCell;
+            
+            if (newValue !== oldValue) {
+                const updates = {};
+                updates[field] = newValue;
+                
+                fetch('/api/update_token', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({token_id: tokenId, updates: updates})
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        td.textContent = newValue;
+                        // Обновляем в текущих результатах
+                        const row = currentResults.find(r => r.token_id === tokenId);
+                        if (row) row[field] = newValue;
+                    } else {
+                        td.textContent = oldValue;
+                    }
+                })
+                .catch(() => {
+                    td.textContent = oldValue;
+                });
+            } else {
+                td.textContent = oldValue;
+            }
+            
+            editingCell = null;
+        }
+        
+        function cancelEdit() {
+            if (editingCell) {
+                editingCell.td.textContent = editingCell.oldValue;
+                editingCell = null;
+            }
+        }
+        
+        // Экспорт в JSON с выбором имени
+        function exportResults() {
+            if (currentResults.length === 0) {
+                alert('Нет результатов для экспорта');
+                return;
+            }
+            
+            // Спрашиваем имя файла
+            const filename = prompt('Введите имя файла для сохранения:', 
+                                `corpus_export_${new Date().toISOString().slice(0,19).replace(/:/g, '-')}.json`);
+            
+            if (!filename) return; // пользователь отменил
+            
+            fetch('/api/export_json', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    results: currentResults,
+                    filename: filename
+                })
+            })
+            .then(res => {
+                if (!res.ok) throw new Error('Ошибка экспорта');
+                return res.blob();
+            })
+            .then(blob => {
+                // Создаем ссылку для скачивания
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+            })
+            .catch(err => {
+                alert('Ошибка при экспорте: ' + err.message);
+            });
+        }
+        
+        // Загрузка файла
+        document.getElementById('uploadForm').onsubmit = function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            
+            document.getElementById('loading').style.display = 'block';
+            
+            fetch('/api/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.error) {
+                    alert('Ошибка: ' + data.error);
+                } else {
+                    alert(data.message);
+                    loadDocuments();
+                }
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('fileInput').value = '';
+            })
+            .catch(err => {
+                alert('Ошибка загрузки');
+                document.getElementById('loading').style.display = 'none';
+            });
+        };
+        
+        // Удаление документа
+        function deleteDocument(docId) {
+            if (!confirm('Удалить документ и все его слова?')) return;
+            
+            fetch('/api/delete_document', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({doc_id: docId})
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    loadDocuments();
+                }
+            });
+        }
+        
+        // Поиск по Enter
+        document.getElementById('searchInput').onkeypress = function(e) {
+            if (e.key === 'Enter') search();
+        };
+        
+        // Загрузка документов при старте
+        loadDocuments();
+    </script>
+</body>
+</html>

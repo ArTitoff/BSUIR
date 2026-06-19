@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Asistent Chat with History</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f0f2f5;
+            height: 100vh;
+            display: flex;
+        }
+        
+        /* Sidebar - список сессий */
+        .sidebar {
+            width: 260px;
+            background: #2c3e50;
+            color: white;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .sidebar-header {
+            padding: 20px;
+            background: #1a252f;
+        }
+        
+        .sidebar-header h3 { font-size: 16px; margin-bottom: 10px; }
+        
+        .new-chat-btn {
+            width: 100%;
+            padding: 10px;
+            background: #4a6fa5;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        
+        .sessions-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+        }
+        
+        .session-item {
+            padding: 12px;
+            margin-bottom: 8px;
+            background: #34495e;
+            border-radius: 8px;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .session-item:hover { background: #3d5a73; }
+        .session-item.active { background: #4a6fa5; }
+        
+        .session-name {
+            font-size: 12px;
+            font-family: monospace;
+            margin-bottom: 4px;
+        }
+        
+        .session-date {
+            font-size: 10px;
+            opacity: 0.7;
+        }
+        
+        .session-count {
+            font-size: 10px;
+            background: #1a252f;
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 10px;
+            margin-top: 5px;
+        }
+        
+        .delete-session {
+            position: absolute;
+            right: 8px;
+            top: 8px;
+            background: none;
+            border: none;
+            color: #ff6b6b;
+            cursor: pointer;
+            font-size: 14px;
+            opacity: 0;
+        }
+        
+        .session-item:hover .delete-session { opacity: 1; }
+        
+        /* Main chat area */
+        .chat-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: white;
+        }
+        
+        .chat-header {
+            background: #4a6fa5;
+            color: white;
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .chat-header h1 { font-size: 20px; }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            margin-left: 15px;
+            padding: 5px 10px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 6px;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: #fafafa;
+        }
+        
+        .message {
+            margin-bottom: 16px;
+            display: flex;
+            position: relative;
+        }
+        
+        .message.user { justify-content: flex-end; }
+        .message.bot { justify-content: flex-start; }
+        
+        .message-content {
+            max-width: 70%;
+            padding: 10px 16px;
+            border-radius: 18px;
+            line-height: 1.4;
+        }
+        
+        .message.user .message-content {
+            background: #4a6fa5;
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+        
+        .message.bot .message-content {
+            background: white;
+            color: #333;
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        
+        .message-actions {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            display: none;
+            gap: 4px;
+            background: white;
+            border-radius: 12px;
+            padding: 2px 6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+        
+        .message.user .message-actions { right: auto; left: -8px; }
+        .message:hover .message-actions { display: flex; }
+        
+        .message-actions button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 12px;
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+        
+        .message-actions button.edit:hover { background: #4a6fa5; color: white; }
+        .message-actions button.delete:hover { background: #dc3545; color: white; }
+        
+        .sources {
+            font-size: 10px;
+            color: #888;
+            margin-top: 6px;
+            padding-top: 4px;
+            border-top: 1px solid #eee;
+        }
+        
+        .timestamp {
+            font-size: 9px;
+            color: #aaa;
+            margin-top: 4px;
+        }
+        
+        .chat-input {
+            padding: 16px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .chat-input input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 24px;
+            outline: none;
+        }
+        
+        .chat-input input:focus { border-color: #4a6fa5; }
+        
+        .chat-input button {
+            padding: 12px 24px;
+            background: #4a6fa5;
+            color: white;
+            border: none;
+            border-radius: 24px;
+            cursor: pointer;
+        }
+        
+        .typing {
+            display: none;
+            padding: 10px 16px;
+            background: white;
+            border-radius: 18px;
+            width: fit-content;
+        }
+        
+        .typing span {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #999;
+            margin: 0 2px;
+            animation: typing 1.4s infinite;
+        }
+        
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-8px); }
+        }
+        
+        .edit-input {
+            width: 100%;
+            padding: 8px;
+            border: 2px solid #4a6fa5;
+            border-radius: 12px;
+            font-family: inherit;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h3>💬 Chats</h3>
+            <button class="new-chat-btn" onclick="newSession()">+ Новый чат</button>
+        </div>
+        <div class="sessions-list" id="sessionsList">
+            <div style="text-align: center; padding: 20px;">Loading...</div>
+        </div>
+    </div>
+    
+    <div class="chat-main">
+        <div class="chat-header">
+            <h1>📚 Chat Assistant</h1>
+            <div class="nav-links">
+                <button onclick="exportChatToTxt()" style="background: white; border: 1px solid white; padding: 5px 10px; border-radius: 6px; cursor: pointer;">💾 Сохранить чат</button>
+                <a href="/">На главную</a>
+            </div>
+        </div>
+        
+        <div class="chat-messages" id="messages">
+            <div class="message bot">
+                <div class="message-content">Hello! Ask me anything about your documents. 📚</div>
+            </div>
+        </div>
+        
+        <div class="chat-input">
+            <input type="text" id="questionInput" placeholder="Ask a question..." onkeypress="if(event.key=='Enter') ask()">
+            <button onclick="ask()">Send</button>
+        </div>
+    </div>
+    
+    <script>
+        let currentSessionId = null;
+        
+        // Загрузка списка сессий
+        async function loadSessions() {
+            const response = await fetch('/api/rag/sessions');
+            const data = await response.json();
+            
+            const container = document.getElementById('sessionsList');
+            if (data.sessions.length === 0) {
+                container.innerHTML = '<div style="text-align: center; padding: 20px;">No chats yet</div>';
+                return;
+            }
+            
+            container.innerHTML = '';
+            for (const s of data.sessions) {
+                // Получаем первое сообщение пользователя для названия
+                const firstMsg = await getFirstMessage(s.session_id);
+                const chatName = firstMsg || s.session_id;
+                const shortName = chatName.length > 25 ? chatName.slice(0, 25) + '...' : chatName;
+                
+                const div = document.createElement('div');
+                div.className = `session-item ${currentSessionId === s.session_id ? 'active' : ''}`;
+                div.onclick = () => switchSession(s.session_id);
+                div.innerHTML = `
+                    <div class="session-name">${escapeHtml(shortName)}</div>
+                    <div class="session-date">${new Date(s.created_at).toLocaleString()}</div>
+                    <div class="session-count">${s.msg_count || 0} messages</div>
+                    <button class="delete-session" onclick="event.stopPropagation(); deleteSession('${s.session_id}')">🗑</button>
+                `;
+                container.appendChild(div);
+            }
+        }
+
+        // Новая функция для получения первого сообщения
+        async function getFirstMessage(sessionId) {
+            const response = await fetch(`/api/rag/history/${sessionId}`);
+            const data = await response.json();
+            const firstUserMsg = data.messages.find(m => m.role === 'user');
+            return firstUserMsg ? firstUserMsg.content : null;
+        }
+        
+        // Создать новую сессию
+        async function newSession() {
+            currentSessionId = null;
+            document.getElementById('messages').innerHTML = `
+                <div class="message bot">
+                    <div class="message-content">New chat started! Ask me anything. 📚</div>
+                </div>
+            `;
+            loadSessions();
+        }
+        
+        // Переключиться на сессию
+        async function switchSession(sessionId) {
+            currentSessionId = sessionId;
+            await loadHistory(sessionId);
+            loadSessions();
+        }
+        
+        // Загрузить историю
+        async function loadHistory(sessionId) {
+            const response = await fetch(`/api/rag/history/${sessionId}`);
+            const data = await response.json();
+            
+            const messagesDiv = document.getElementById('messages');
+            messagesDiv.innerHTML = '';
+            
+            for (const msg of data.messages) {
+                addMessage(msg.content, msg.role === 'user', msg.sources, msg.id, msg.created_at);
+            }
+            
+            if (data.messages.length === 0) {
+                messagesDiv.innerHTML = `<div class="message bot"><div class="message-content">Welcome back! Ask me anything. 📚</div></div>`;
+            }
+        }
+        
+        // Удалить сессию
+        async function deleteSession(sessionId) {
+            if (!confirm('Delete this chat?')) return;
+            await fetch(`/api/rag/session/${sessionId}`, { method: 'DELETE' });
+            if (currentSessionId === sessionId) newSession();
+            loadSessions();
+        }
+        
+        // Добавить сообщение в чат
+        function addMessage(text, isUser, sources = null, msgId = null, timestamp = null) {
+            const messagesDiv = document.getElementById('messages');
+            const div = document.createElement('div');
+            div.className = `message ${isUser ? 'user' : 'bot'}`;
+            div.id = msgId ? `msg-${msgId}` : '';
+            
+            let content = `<div class="message-content">${escapeHtml(text)}`;
+            if (sources && sources.length) {
+                content += `<div class="sources">📄 Sources: ${sources.join(', ')}</div>`;
+            }
+            if (timestamp) {
+                content += `<div class="timestamp">${new Date(timestamp).toLocaleTimeString()}</div>`;
+            }
+            if (msgId) {
+                content += `<div class="message-actions">
+                    <button class="edit" onclick="editMessage(${msgId}, this)">✏️ Edit</button>
+                    <button class="delete" onclick="deleteMessage(${msgId})">🗑 Delete</button>
+                </div>`;
+            }
+            content += `</div>`;
+            div.innerHTML = content;
+            messagesDiv.appendChild(div);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+        
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        function showTyping() {
+            const div = document.createElement('div');
+            div.className = 'message bot';
+            div.id = 'typingIndicator';
+            div.innerHTML = `<div class="typing" style="display: block;"><span></span><span></span><span></span></div>`;
+            document.getElementById('messages').appendChild(div);
+        }
+        
+        function hideTyping() {
+            const el = document.getElementById('typingIndicator');
+            if (el) el.remove();
+        }
+        
+        // Отправить вопрос
+        async function ask() {
+            const input = document.getElementById('questionInput');
+            const question = input.value.trim();
+            if (!question) return;
+            
+            addMessage(question, true);
+            input.value = '';
+            showTyping();
+            
+            try {
+                const response = await fetch('/api/rag/ask', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ question: question, session_id: currentSessionId })
+                });
+                const data = await response.json();
+                hideTyping();
+                
+                if (data.success) {
+                    if (!currentSessionId) currentSessionId = data.session_id;
+                    addMessage(data.answer, false, data.sources);
+                    loadSessions();
+                } else {
+                    addMessage(data.answer || 'Error', false);
+                }
+            } catch (err) {
+                hideTyping();
+                addMessage('Connection error', false);
+            }
+        }
+        
+        // Редактировать сообщение
+        async function editMessage(msgId, btn) {
+            const msgDiv = btn.closest('.message');
+            const contentDiv = msgDiv.querySelector('.message-content');
+            const oldText = contentDiv.childNodes[0].nodeValue;
+            
+            const input = document.createElement('textarea');
+            input.className = 'edit-input';
+            input.value = oldText.trim();
+            input.rows = 2;
+            
+            const save = async () => {
+                const newText = input.value.trim();
+                if (newText !== oldText) {
+                    const res = await fetch(`/api/rag/message/${msgId}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ content: newText })
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        contentDiv.innerHTML = escapeHtml(newText);
+                        const sourcesDiv = contentDiv.querySelector('.sources');
+                        if (sourcesDiv) contentDiv.appendChild(sourcesDiv);
+                        contentDiv.appendChild(btn.parentElement);
+                    }
+                }
+                contentDiv.style.display = 'block';
+                input.remove();
+            };
+            
+            contentDiv.style.display = 'none';
+            contentDiv.parentNode.insertBefore(input, contentDiv);
+            input.focus();
+            input.onblur = save;
+            input.onkeypress = (e) => { if (e.key === 'Enter' && !e.shiftKey) save(); };
+        }
+        
+        // Удалить сообщение
+        async function deleteMessage(msgId) {
+            if (!confirm('Delete this message?')) return;
+            await fetch(`/api/rag/message/${msgId}`, { method: 'DELETE' });
+            const el = document.getElementById(`msg-${msgId}`);
+            if (el) el.remove();
+            loadSessions();
+        }
+
+        async function exportChatToTxt() {
+            if (!currentSessionId) {
+                alert('No active chat');
+                return;
+            }
+            
+            const response = await fetch(`/api/rag/history/${currentSessionId}`);
+            const data = await response.json();
+            
+            let content = `=== CHAT EXPORT ===\n`;
+            content += `Date: ${new Date().toLocaleString()}\n`;
+            content += `Session: ${currentSessionId}\n`;
+            content += `Total messages: ${data.messages.length}\n`;
+            content += `=${'='.repeat(50)}\n\n`;
+            
+            for (const msg of data.messages) {
+                const role = msg.role === 'user' ? '👤 User' : '🤖 Assistant';
+                content += `[${new Date(msg.created_at).toLocaleTimeString()}] ${role}:\n`;
+                content += `${msg.content}\n`;
+                
+                if (msg.sources && msg.sources.length > 0) {
+                    content += `📄 Sources: ${msg.sources.join(', ')}\n`;
+                }
+                content += `\n${'-'.repeat(40)}\n\n`;
+            }
+            
+            // Скачиваем файл
+            const blob = new Blob([content], {type: 'text/plain'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `chat_${currentSessionId}_${new Date().toISOString().slice(0,19)}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+        
+        // Загрузить сессии при старте
+        loadSessions();
+    </script>
+</body>
+</html>
