@@ -1,0 +1,19 @@
+@startuml
+class Customer {
+    get_name()
+    add_product()
+    remove_product()
+    print_info()
+    set_money()
+    get_money()
+    get_customer_products()
+    set_customer_products()
+        __name : str 
+    __money : int 
+    __products : List[Product] 
+    __money
+    __products
+    __init__(__name: str , __money: int , __products: List[Product] )
+}
+Customer --> Product
+@enduml

@@ -1,0 +1,12 @@
+@startuml
+class Catalog {
+    add_product()
+    remove_product()
+    display_catalog()
+    find_product()
+    get_catalog()
+        __products : List[Product] 
+    __init__(__products: List[Product] )
+}
+Catalog --> Product
+@enduml

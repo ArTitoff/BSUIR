@@ -1,0 +1,12 @@
+@startuml
+class Electroshop {
+    show_customers()
+    add_customer()
+    remove_customer()
+    get_customer()
+    get_customers()
+        __customers : List[Customer] 
+    __init__(__customers: List[Customer] )
+}
+Electroshop --> Customer
+@enduml

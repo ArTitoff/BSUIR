@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Управление владельцами автомобилей</h1>
+
+<div class="form-section">
+    <h2>Добавить нового владельца</h2>
+    <form method="POST" action="{{ url_for('add_owner') }}">
+        <div class="form-group">
+            <label>Номер водительского удостоверения:</label>
+            <input type="text" name="license_number" pattern="[A-Za-z0-9]{1,20}" title="Только буквы и цифры (макс. 20 символов)" required>
+        </div>
+        <div class="form-group">
+            <label>ФИО:</label>
+            <input type="text" name="full_name" pattern="[А-Яа-яA-Za-z\s]{1,100}" title="Только буквы и пробелы" required>
+        </div>
+        <div class="form-group">
+            <label>Адрес прописки:</label>
+            <textarea name="address" rows="3" required></textarea>
+        </div>
+        <div class="form-group">
+            <label>Год рождения:</label>
+            <input type="number" name="birth_year" min="1921" max="{{ current_year - 18 }}" 
+                   value="1980" required>
+            <small>Минимальный возраст: 18 лет</small>
+        </div>
+        <div class="form-group">
+            <label>Пол:</label>
+            <select name="gender" required>
+                <option value="Мужской">Мужской</option>
+                <option value="Женский">Женский</option>
+            </select>
+        </div>
+        <button type="submit">Добавить владельца</button>
+    </form>
+</div>
+
+<h2>Список владельцев</h2>
+{% if owners %}
+<table>
+    <thead>
+        <tr>
+            <th>Номер удостоверения</th>
+            <th>ФИО</th>
+            <th>Адрес</th>
+            <th>Год рождения</th>
+            <th>Пол</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for owner in owners %}
+        <tr>
+            <form method="POST" action="{{ url_for('edit_owner') }}">
+            <td>
+                <input type="text" name="license_number" value="{{ owner[0] }}" readonly style="background-color: #f0f0f0;">
+            </td>
+            <td>
+                <input type="text" name="full_name" value="{{ owner[1] }}" pattern="[А-Яа-яA-Za-z\s]{1,100}" required>
+            </td>
+            <td>
+                <textarea name="address" rows="2" required>{{ owner[2] }}</textarea>
+            </td>
+            <td>
+                <input type="number" name="birth_year" value="{{ owner[3] }}" min="1921" max="{{ current_year - 18 }}" required>
+            </td>
+            <td>
+                <select name="gender" required>
+                    <option value="Мужской" {% if owner[4] == 'Мужской' %}selected{% endif %}>Мужской</option>
+                    <option value="Женский" {% if owner[4] == 'Женский' %}selected{% endif %}>Женский</option>
+                </select>
+            </td>
+            <td class="actions">
+                <button type="submit">Обновить</button>
+                <a href="{{ url_for('delete_owner', license_number=owner[0]) }}" 
+                   onclick="return confirm('Удалить владельца {{ owner[1] }}?')" 
+                   class="btn-danger">Удалить</a>
+            </td>
+            </form>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>Владельцы не найдены.</p>
+{% endif %}
+
+<script>
+    // Установка текущего года для валидации
+    document.addEventListener('DOMContentLoaded', function() {
+        const currentYear = new Date().getFullYear();
+        document.querySelector('input[name="birth_year"]').max = currentYear - 18;
+        
+        const editForms = document.querySelectorAll('form[action="{{ url_for("edit_owner") }}"]');
+        editForms.forEach(form => {
+            const birthYearInput = form.querySelector('input[name="birth_year"]');
+            birthYearInput.max = currentYear - 18;
+        });
+    });
+</script>
+{% endblock %}

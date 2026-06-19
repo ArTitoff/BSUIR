@@ -1,0 +1,583 @@
+1 Функция создания файла CreateNewFile
+
+В данной функции подается название файла, содержащееся в переменной path. Она использует объект ofstream, который предоставляет функциональность для записи данных в файл. Если файл открывается, это значит, что он создан, в противном же случаем на выведет ошибку "Ошибка открытия файла для записи."
+
+void CreateNewFile(string&path) {
+    ofstream file(path); 
+    if (file.is_open()) {
+        file.close();
+        //cout << "Файл создан\n";
+    }
+    else cout << "Файл не создан\n";
+}
+
+
+2 Функция добавления новых данных в файл AddData
+
+Данная функция добавляет данные в файл (название файла в переменной filename), которые содержатся в переменной data. При помощи объекта ofstream мы открываем файл для записи и затем добавляем туда данные. При ошибке нам выведет "Ошибка открытия файла для записи."
+
+Сначала пользователь вводит данные, которые добавляются в переменную temp
+
+cout << "Введите название техники: " ;
+cin >> temp;
+addtemp = temp;
+cout << "Введите тип техники: ";
+cin >> temp;
+addtemp = addtemp + ' ' + temp;
+cout << "Введите максимальную высоту полета: " ;
+cin >> temp;
+addtemp = addtemp + ' ' + temp;
+cout << "Введите максимальную скорость(в км/ч) полета: ";
+cin >> temp;
+addtemp = addtemp + ' ' + temp;
+cout << "Введите статус: ";
+cin.get();
+getline(cin, temp);
+addtemp = addtemp + ' ' + temp;
+AddData(path, addtemp);
+cout << "Данные успешно добавлены " << endl;
+
+После вызывается функция AddData, которая добавляет данные из переменной temp в файл
+
+void AddData(string& filename, const string& data) {
+    ofstream file(filename, ios::app); 
+    if (file.is_open()) {
+        file << data << endl;
+        file.close();
+    }
+    else {
+        cout << "Ошибка открытия файла для записи." << endl;
+    }
+}
+
+3 Функция считывания данных из файла ReadFile
+
+Стоит упомянуть про функцию ReadFile, так как при помощи ее считываются данные из файла и добавляются в массив структур model, для дальнейшей работы с данными.
+
+На вход приходит название файла и счетчик, который отслеживает количество элементов в model
+Если файл не пустой, из него при помощи оператора >> считываются данные в соответсвующие переменные. Сначала имя продукции, затем тип, затем мексимальная высота полета, затем максимальная скорость. При обработке статуса у нас возможны три варианта: "на этапе разработки",  "в производстве", "снят с производства". Если temp начинается на 'в' >> добавляется два раза в статус, так как состоит из двух слове, иначе три раза.
+
+ void ReadFile(string& filename, int& avCol) {
+     ifstream file(filename);
+     if (file.is_open()) {
+         while (!file.eof()) {
+             string temp;
+             file >> temp;
+             if (temp != "") {
+                 model[avCol].name = temp;
+                 file >>  model[avCol].type >> model[avCol].flightAltitude >> model[avCol].maxSpeed >> temp;
+                 if (temp == "в") {
+                     model[avCol].status = temp;
+                     file >> temp;
+                     model[avCol].status = model[avCol].status + ' ' + temp;
+                 }
+                 else {
+                     model[avCol].status = temp;
+                     file >> temp;
+                     model[avCol].status = model[avCol].status + ' ' + temp;
+                     file >> temp;
+                     model[avCol].status = model[avCol].status + ' ' + temp;
+                 }
+                 avCol++;
+             }
+         }
+         file.close();
+     }
+     else {
+         cout << "Не получилось открыть файл\n" << endl;
+     }
+ }
+
+
+4 Функция просмотра содержимого файла PrintAllModels
+
+Данная функция получает на вход информацию из файла, которая была добавлена в массив структур model и количество элементов, добавленных в структуру, avCol 
+После этого она выводит все данные.
+
+void PrintAllModels(avia model[], int& avCol) {
+    for (int i = 0; i < avCol; i++) {  
+        cout << i+1 << ". " << "Название: " << model[i].name << endl << "   Тип продукции: " << model[i].type << endl << "   Максимальная высота полета: " << model[i].flightAltitude << endl << "   Максимальная скорость: " << model[i].maxSpeed << " км/ч" << endl << "   Статус: " << model[i].status << endl << endl;
+    }
+}
+
+
+5 Функция удаления данных из файла DeleteData
+
+В данной функции сначала проверяется, не пуст ли файл. Если да, то выводится "Файл пустой".
+Если нет, то пользователь выбирает номер элемента, который хочет удалить (все данные пронумерованы, пользователь может посмотреть номер нужного ему элемента, вызвав функцию PrintAllModels)
+
+В данную функцию передается массив структур model, количество элементов avCol, номер выбранного элемента vibor и название файла filename.
+При помощи цикла for производится затирание выбранного элемента, уменьшение количества элементов.
+После файл перезаписывается уже без удаленного элемента при помощи цикла for и функции AddData
+
+void DeleteData(avia model[], int& avCol, int vibor, string& filename) {
+    for (vibor; vibor < avCol-1; vibor++) {
+        model[vibor] = model[vibor + 1];
+    }
+    avCol--;
+    string temp;
+    CreateNewFile(filename);
+    for (int i = 0; i < avCol; i++) {
+        temp = model[i].name + ' ' + model[i].type + ' ' + to_string(model[i].flightAltitude) + ' ' + to_string(model[i].maxSpeed) + ' ' + model[i].type;
+        AddData(filename, temp);
+    }
+}
+
+6 Функция линейного поиска заданного элемента в файле LinSearch
+
+В этой функции мы вводим ключ key, по которому будем искать, а так же model и avCol
+
+Мы проходим по всему массиву структур model, пока не найдем нужный элемент.
+Нашли - выводим данные элемента, если нет, пишем  "Элеметн не найден".
+
+void LinSearch(avia model[], int& avCol, int key) {
+    bool found = false;
+    for (int i = 0; i < avCol; i++)
+        if (model[i].flightAltitude == key) {
+            found = true;
+            cout << "Название: " << model[i].name << endl << "   Тип продукции:" << model[i].type << endl << "   Максимальная высота полета: " << model[i].flightAltitude << endl << "   Максимальная скорость: " << model[i].maxSpeed << endl << "   Статус: " << model[i].status << endl << endl; 
+            // break; – если поле поиска уникальное
+        }
+    if (!found)  // Вывод сообщения, что элемент не найден 
+        cout << "Элеметн не найден" << endl;
+}
+
+7 Функция бинарного поиска заданного элемента в файле BinarSearch
+
+В этой функции мы вводим ключ key, по которому будем искать, а так же model и avCol
+(Предварительно сортируем массив)
+
+Делим массив на две части при помощи j и i_key при помощи цикла while, сравнивая со средним элементом m. После этого, если значение model[i_key].flightAltitude не равно key, выводим, что элемент не найден, иначе выводим данные элемента.
+
+void BinarSearch(avia model[], int& avCol, int key) {
+    int j = avCol - 1;
+    int i_key = 0;
+    while (i_key < j) {
+       int m = (i_key + j) / 2;
+        if (model[m].flightAltitude < key) i_key = m + 1;
+        else j = m;
+    }
+    if (model[i_key].flightAltitude != key) // Элемент не найден
+        cout << "Элеметн не найден" << endl;
+    else 
+        cout << "Название: " << model[i_key].name << endl << "   Тип продукции:" << model[i_key].type << endl << "   Максимальная высота полета: " << model[i_key].flightAltitude << endl << "   Максимальная скорость: " << model[i_key].maxSpeed << endl << "   Статус: " << model[i_key].status << endl << endl;
+}
+
+8. Сортировка данных при помощи сортировки выбора PriamoyVibor
+
+В данной функции задаются только model и avCol
+(принцип работы данной сортировки описан выше)
+
+void PriamoyVibor(avia model[], int& avCol) {
+    for (int i = 0; i < avCol - 1; i++) {
+        int m = i;
+        for (int j = i + 1; j < avCol; j++)
+            if (model[j].flightAltitude < model[m].flightAltitude) m = j;
+        avia a = model[m];
+        model[m] = model[i];
+        model[i] = a;
+    }
+}
+
+9 Сортировка данных при помощи сортировки QuickSort
+
+В данной функции задается model и left - начало участка массива, который надо отсортировать, right - конец участка массива, который надо отсортировать,
+(принцип работы данной сортировки описан выше)
+
+ void QuickSort(int left, int right, avia model[]) {
+     if (left < right) {
+         avia t;
+         int i = left;
+         int j = right;
+         int x = model[(left + right) / 2].flightAltitude;
+         while (i <= j) {
+             while (model[i].flightAltitude < x)
+                 i++;
+             while (model[j].flightAltitude > x)
+                 j--;
+             if (i <= j) {
+                 t = model[i];
+                 model[i] = model[j];
+                 model[j] = t;
+                 i++;
+                 j--;
+             }
+         }
+         if (left < j)
+             QuickSort(left, j, model);
+         if (i < right)
+             QuickSort(i, right, model);
+     }
+ }
+
+10. Вывод данных в соответствии с заданным ключом Print
+
+Эта функция выводит все элементы, которые удовлетворяют условию: максимальная скорость выше 700км/ч и статус "снят с производства"
+
+void Print(avia model[], int& avCol) {
+    for (int i = 0; i < avCol; i++) {
+        if (model[i].maxSpeed > 700 && model[i].status == "снят с производства")
+            cout << i + 1 << ". " << "Название: " << model[i].name << endl << "   Тип продукции: " << model[i].type << endl << "   Максимальная высота полета: " << model[i].flightAltitude << endl << "   Максимальная скорость: " << model[i].maxSpeed << " км/ч"  << endl << "   Статус: " << model[i].status << endl << endl;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Бинарный поиск - это эффективный алгоритм поиска элемента в отсортированном массиве данных. Он работает путем деления массива на две равные части и сравнивания искомого элемента со значением элемента в середине массива. Если искомый элемент равен значению элемента в середине, то поиск успешен. Если значение искомого элемента меньше значения элемента в середине, то поиск продолжается в первой половине массива, в противном случае - во второй половине. Этот процесс повторяется до тех пор, пока искомый элемент не будет найден или массив не будет исчерпан.
+
+Основные преимущества бинарного поиска:
+1. Эффективность: бинарный поиск имеет временную сложность O(log n), что означает, что время поиска увеличивается логарифмически с увеличением размера массива.
+2. Простота реализации: алгоритм можно реализовать просто и с минимальным количеством кода.
+3. Надежность: при обязательном условии, что массив отсортирован, бинарный поиск всегда дает правильный результат.
+
+Однако есть и недостатки бинарного поиска:
+1. Требование к отсортированному массиву: перед использованием бинарного поиска необходимо отсортировать массив данных.
+2. Ограничения на использование: бинарный поиск применим только к структурам данных, поддерживающим случайный доступ, например, к массивам или спискам с индексацией.
+
+
+
+
+
+
+
+
+Линейный поиск (Linear Search) - это простой алгоритм поиска элемента в массиве, который просматривает каждый элемент массива по очереди для нахождения искомого элемента. Алгоритм работает путем сравнения искомого элемента с каждым элементом массива, начиная с первого, и продолжает поиск до тех пор, пока не будет найден искомый элемент или не закончится массив.
+
+Основные шаги алгоритма линейного поиска:
+
+1. Начинаем с предположения, что элемент не найден.
+2. Начинаем с первого элемента и сравниваем его с искомым элементом.
+3. Если элемент совпадает с искомым элементом, то поиск завершается.
+4. Если элемент не совпадает, переходим к следующему элементу.
+5. Повторяем шаги 2-4 до тех пор, пока не будет найден искомый элемент или не будет достигнут конец массива.
+
+Временная сложность линейного поиска составляет O(n), где n - количество элементов в массиве. Это означает, что время выполнения алгоритма линейного поиска линейно зависит от количества элементов в массиве.
+
+
+Линейный поиск - простой и понятный алгоритм поиска, который хорошо работает для небольших массивов или когда элементы не отсортированы, но для больших массивов или отсортированных данных более эффективны другие алгоритмы, такие как бинарный поиск.
+
+
+УТВЕРЖДАЮ
+Заведующий кафедрой
+	
+(подпись)
+	2024г.
+
+
+#include <iostream>
+#include <fstream>
+#include <string>
+
+    using namespace std;
+
+    struct avia {
+        string name;
+        string type;
+        int flightAltitude; 
+        int maxSpeed;   //>700
+        string status; //sniat s pr
+    };
+    avia model[30];
+
+    void ReadFile(string& filename, int& avCol) {
+        ifstream file(filename);
+        if (file.is_open()) {
+            while (!file.eof()) {
+                string temp;
+                file >> temp;
+                if (temp != "") {
+                    model[avCol].name = temp;
+                    file >>  model[avCol].type >> model[avCol].flightAltitude >> model[avCol].maxSpeed >> temp;
+                    if (temp == "в") {
+                        model[avCol].status = temp;
+                        file >> temp;
+                        model[avCol].status = model[avCol].status + ' ' + temp;
+                    }
+                    else {
+                        model[avCol].status = temp;
+                        file >> temp;
+                        model[avCol].status = model[avCol].status + ' ' + temp;
+                        file >> temp;
+                        model[avCol].status = model[avCol].status + ' ' + temp;
+                    }
+                    avCol++;
+                }
+            }
+            file.close();
+        }
+        else {
+            cout << "Не получилось открыть файл\n" << endl;
+        }
+    }
+
+    void QuickSort(int left, int right, avia model[]) {
+        if (left < right) {
+            avia t;
+            int i = left;
+            int j = right;
+            int x = model[(left + right) / 2].flightAltitude;
+            while (i <= j) {
+                while (model[i].flightAltitude < x)
+                    i++;
+                while (model[j].flightAltitude > x)
+                    j--;
+                if (i <= j) {
+                    t = model[i];
+                    model[i] = model[j];
+                    model[j] = t;
+                    i++;
+                    j--;
+                }
+            }
+            if (left < j)
+                QuickSort(left, j, model);
+            if (i < right)
+                QuickSort(i, right, model);
+        }
+    }
+
+
+void CreateNewFile(string&path) {
+    ofstream file(path); 
+    if (file.is_open()) {
+        file.close();
+        //cout << "Файл создан\n";
+    }
+    else cout << "Файл не создан\n";
+}
+
+void AddData(string& filename, const string& data) {
+    ofstream file(filename, ios::app); 
+    if (file.is_open()) {
+        file << data << endl;
+        file.close();
+    }
+    else {
+        cout << "Ошибка открытия файла для записи." << endl;
+    }
+}
+
+/*void AddDataForDel(string& filename, const string& data) {
+    ofstream file(filename, ios::app);
+    if (file.is_open()) {
+        file << data << endl;
+        file.close();
+    }
+}*/
+
+void DeleteData(avia model[], int& avCol, int vibor, string& filename) {
+    for (vibor; vibor < avCol-1; vibor++) {
+        model[vibor] = model[vibor + 1];
+    }
+    avCol--;
+    string temp;
+    CreateNewFile(filename);
+    for (int i = 0; i < avCol; i++) {
+        temp = model[i].name + ' ' + model[i].type + ' ' + to_string(model[i].flightAltitude) + ' ' + to_string(model[i].maxSpeed) + ' ' + model[i].type;
+        AddData(filename, temp);
+    }
+}
+
+void LinSearch(avia model[], int& avCol, int key) {
+    bool found = false;
+    for (int i = 0; i < avCol; i++)
+        if (model[i].flightAltitude == key) {
+            found = true;
+            cout << "Название: " << model[i].name << endl << "   Тип продукции:" << model[i].type << endl << "   Максимальная высота полета: " << model[i].flightAltitude << endl << "   Максимальная скорость: " << model[i].maxSpeed << endl << "   Статус: " << model[i].status << endl << endl; 
+            // break; – если поле поиска уникальное
+        }
+    if (!found)  // Вывод сообщения, что элемент не найден 
+        cout << "Элеметн не найден" << endl;
+}
+
+void BinarSearch(avia model[], int& avCol, int key) {
+    int j = avCol - 1;
+    int i_key = 0;
+    while (i_key < j) {
+       int m = (i_key + j) / 2;
+        if (model[m].flightAltitude < key) i_key = m + 1;
+        else j = m;
+    }
+    if (model[i_key].flightAltitude != key) // Элемент не найден
+        cout << "Элеметн не найден" << endl;
+    else 
+        cout << "Название: " << model[i_key].name << endl << "   Тип продукции:" << model[i_key].type << endl << "   Максимальная высота полета: " << model[i_key].flightAltitude << endl << "   Максимальная скорость: " << model[i_key].maxSpeed << endl << "   Статус: " << model[i_key].status << endl << endl;
+}
+
+void PriamoyVibor(avia model[], int& avCol) {
+    for (int i = 0; i < avCol - 1; i++) {
+        int m = i;
+        for (int j = i + 1; j < avCol; j++)
+            if (model[j].flightAltitude < model[m].flightAltitude) m = j;
+        avia a = model[m];
+        model[m] = model[i];
+        model[i] = a;
+    }
+}
+
+
+void Print(avia model[], int& avCol) {
+    for (int i = 0; i < avCol; i++) {
+        if (model[i].maxSpeed > 700 && model[i].status == "снят с производства")
+            cout << i + 1 << ". " << "Название: " << model[i].name << endl << "   Тип продукции: " << model[i].type << endl << "   Максимальная высота полета: " << model[i].flightAltitude << endl << "   Максимальная скорость: " << model[i].maxSpeed << " км/ч"  << endl << "   Статус: " << model[i].status << endl << endl;
+    }
+}
+
+void PrintAllModels(avia model[], int& avCol) {
+    for (int i = 0; i < avCol; i++) {  
+        cout << i+1 << ". " << "Название: " << model[i].name << endl << "   Тип продукции: " << model[i].type << endl << "   Максимальная высота полета: " << model[i].flightAltitude << endl << "   Максимальная скорость: " << model[i].maxSpeed << " км/ч" << endl << "   Статус: " << model[i].status << endl << endl;
+    }
+}
+
+int main() {
+    string path = "Myfile.txt";
+    string temp, addtemp;
+    int flightAltitude, avCol, vibor;
+    int choice;
+    do {
+        cout << "Меню:" << endl;
+        cout << "1. Создать файл" << endl;
+        cout << "2. Добавить данные" << endl;
+        cout << "3. Просмотр всех данных файла" << endl;
+        cout << "4. Удалить элемент" << endl;
+        cout << "5. Линейный поиск" << endl;
+        cout << "6. Бинарный поиск" << endl;
+        cout << "7. Сортировка выбором" << endl;
+        cout << "8. QuickSort" << endl;
+        cout << "9. Вывести информацию о технике со максимальной скоростью выше 700 км/ч и имеющую статус 'снят с производства' " << endl;
+        cout << "0. Выход" << endl << endl;
+
+        cout << "Введите номер команды: ";
+        cin >> choice;
+
+        switch (choice) {
+        case 1:
+            CreateNewFile(path);
+            cout << "Файл Myfile.txt создан" << endl;
+            break;
+        case 2:
+            cout << "Введите название техники: " ;
+            cin >> temp;
+            addtemp = temp;
+            cout << "Введите тип техники: ";
+            cin >> temp;
+            addtemp = addtemp + ' ' + temp;
+            cout << "Введите максимальную высоту полета: " ;
+            cin >> temp;
+            addtemp = addtemp + ' ' + temp;
+            cout << "Введите максимальную скорость(в км/ч) полета: ";
+            cin >> temp;
+            addtemp = addtemp + ' ' + temp;
+            cout << "Введите статус: ";
+            cin.get();
+            getline(cin, temp);
+            addtemp = addtemp + ' ' + temp;
+            AddData(path, addtemp);
+            cout << "Данные успешно добавлены " << endl;
+            break;
+        case 3:
+            avCol = 0;
+            ReadFile(path, avCol);
+            if (avCol <= 0) 
+                cout << "Файл пустой" << endl;
+            else
+                PrintAllModels(model, avCol);
+            break;
+        case 4:
+            avCol = 0;
+            ReadFile(path, avCol);
+            if (avCol <= 0)
+                cout << "Файл пустой" << endl;
+            else {
+                cout << "Выберите элемент, который хотите удалить ";
+                cin >> vibor;
+                if (avCol < vibor || vibor <= 0) {
+                    while (avCol < vibor || vibor <= 0) {
+                        cout << "Такого элемента нет. Выберите элемент, который хотите удалить ";
+                        cin >> vibor;
+                    }
+                }
+                DeleteData(model, avCol, vibor-1, path);
+                cout << "Элемент " << vibor << " удален" << endl;
+            }
+            break;
+        case 5:
+            cout << "Введите высоту полета, которая вас интересует " << endl;
+            cin >> flightAltitude;
+            avCol = 0;
+            ReadFile(path, avCol);
+            if (avCol <= 0)
+                cout << "Файл пустой" << endl;
+            else {
+                PriamoyVibor(model, avCol);
+                LinSearch(model, avCol, flightAltitude);
+                }
+            break;
+        case 6:
+            cout << "Введите высоту полета, которая вас интересует " << endl;
+            cin >> flightAltitude;
+            avCol = 0;
+            ReadFile(path, avCol);
+            if (avCol <= 0)
+                cout << "Файл пустой" << endl;
+            else {
+                PriamoyVibor(model, avCol);
+                BinarSearch(model, avCol, flightAltitude);
+            }
+            break;
+        case 7:
+            cout << "Результат сортировки выбором: " << endl;
+            avCol = 0;
+            ReadFile(path, avCol);
+            if (avCol <= 0)
+                cout << "Файл пустой" << endl;
+            else {
+                PriamoyVibor(model, avCol);
+                PrintAllModels(model, avCol);
+            }
+            break;
+        case 8:
+            cout << "Результат сортировки QuickSort: " << endl;
+            avCol = 0;
+            ReadFile(path, avCol);
+            if (avCol <= 0)
+                cout << "Файл пустой" << endl;
+            else {
+                QuickSort(0, avCol - 1, model);
+                PrintAllModels(model, avCol);
+            }
+            break;
+        case 9:
+            avCol = 0;
+            ReadFile(path, avCol);
+            if (avCol <= 0)
+                cout << "Файл пустой" << endl;
+            else
+                Print(model, avCol);
+            break;
+        case 0:
+            cout << "Программа завершена!" << endl;
+            break;
+        default:
+            cout << "Такого варианта нет" << endl;
+        }
+    } while (choice != 0);
+
+    return 0;
+}
+

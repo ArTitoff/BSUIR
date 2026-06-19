@@ -1,0 +1,7 @@
+@startuml
+class Cashbox {
+    buy_product()
+    return_product()
+        __init__()
+}
+@enduml

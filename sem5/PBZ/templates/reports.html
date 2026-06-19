@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Отчеты ГИБДД</h1>
+
+<div class="form-section">
+    <h2>Количество осмотров за период</h2>
+    <form method="POST" action="{{ url_for('inspections_report') }}">
+        <div class="form-group">
+            <label>Начальная дата:</label>
+            <input type="date" name="start_date" required>
+        </div>
+        <div class="form-group">
+            <label>Конечная дата:</label>
+            <input type="date" name="end_date" required>
+        </div>
+        <button type="submit">Сформировать отчет</button>
+    </form>
+</div>
+
+<div class="form-section">
+    <h2>Просмотр списка сотрудников, проводивших осмотры на дату</h2>
+    <form method="POST" action="{{ url_for('inspectors_report') }}">
+        <div class="form-group">
+            <label>Дата:</label>
+            <input type="date" name="date" required>
+        </div>
+        <button type="submit">Найти сотрудников</button>
+    </form>
+</div>
+
+{% if report_data %}
+<div class="form-section">
+    <h2>Результат отчета по осмотрам</h2>
+    <p>Период: с {{ start_date }} по {{ end_date }}</p>
+    {% if report_data %}
+    <table>
+        <thead>
+            <tr>
+                <th>Дата</th>
+                <th>Количество осмотров</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in report_data %}
+            <tr>
+                <td>{{ row[0] }}</td>
+                <td>{{ row[1] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>За указанный период осмотров не проводилось.</p>
+    {% endif %}
+</div>
+{% endif %}
+
+{% if inspectors_data is defined %}
+<div class="form-section">
+    <h2>Сотрудники на дату {{ date }}</h2>
+    {% if inspectors_data %}
+    <table>
+        <thead>
+            <tr>
+                <th>ФИО</th>
+                <th>Звание</th>
+                <th>Осмотренные автомобили</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for inspector in inspectors_data %}
+            <tr>
+                <td>{{ inspector[0] }}</td>
+                <td>{{ inspector[1] }}</td>
+                <td>{{ inspector[2]|join(', ') if inspector[2] else 'Нет данных' }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>На указанную дату осмотры не проводились или сотрудники не найдены.</p>
+    {% endif %}
+</div>
+{% endif %}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const today = new Date().toISOString().split('T')[0];
+        const dateInputs = document.querySelectorAll('input[type="date"]');
+        dateInputs.forEach(input => {
+            if (!input.value) {
+                input.value = today;
+            }
+            input.max = today;
+        });
+    });
+</script>
+{% endblock %}
