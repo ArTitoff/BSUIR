@@ -1,0 +1,3 @@
+﻿  LOIS_1.cpp
+D:\LOIS_1\LOIS_1.cpp(116,16): warning C4267: инициализация: преобразование из "size_t" в "int"; возможна потеря данных
+  LOIS_1.vcxproj -> D:\LOIS_1\x64\Debug\LOIS_1.exe

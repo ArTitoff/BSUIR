@@ -1,10 +1,12 @@
 from constants import *
 from ghost import  *
 from buttons import  Button
+
 import os
 
 # Подавить сообщения от libmpg123
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "1"
+
 
 class Ghost:
     def __init__(self, x_coord, y_coord, target, speed, img, direct, dead, box, id):
